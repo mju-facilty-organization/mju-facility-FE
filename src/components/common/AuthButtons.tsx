@@ -1,7 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/useAuthStore';
+import NavButton from '@/components/common/NavButton';
 
-export default function AuthButtons() {
+const AuthButtons = () => {
   const navigate = useNavigate();
   const { isLoggedIn, user, logout } = useAuthStore();
 
@@ -14,33 +15,20 @@ export default function AuthButtons() {
     <div className="mr-6">
       {isLoggedIn ? (
         <div className="flex items-center gap-4">
-          <span className="text-[#656565] text-lg font-['ABeeZee']">
+          <span className="text-[#656565] text-2xl font-['ABeeZee']">
             {user?.name}님
           </span>
-          <button
-            onClick={handleLogout}
-            className="text-[#656565] text-lg font-['ABeeZee'] hover:underline transition-colors"
-          >
-            로그아웃
-          </button>
+          <NavButton onClick={handleLogout}>로그아웃</NavButton>
         </div>
       ) : (
         <div className="flex items-center gap-4">
-          <Link
-            to="/login"
-            className="text-[#656565] text-lg font-['ABeeZee'] hover:underline transition-colors"
-          >
-            로그인
-          </Link>
-          <span className="text-[#656565] text-lg font-['ABeeZee']">|</span>
-          <Link
-            to="/register"
-            className="text-[#656565] text-lg font-['ABeeZee'] hover:underline transition-colors"
-          >
-            회원가입
-          </Link>
+          <NavButton to="/login">로그인</NavButton>
+          <span className="text-[#656565] text-2xl font-['ABeeZee']">|</span>
+          <NavButton to="/privacy-agreement">회원가입</NavButton>
         </div>
       )}
     </div>
   );
-}
+};
+
+export default AuthButtons;
