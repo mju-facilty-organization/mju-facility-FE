@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Header from '@/components/layout/Header';
-import Layout from './components/layout/Layout';
+import Layout from '@/components/layout/Layout';
 
 export default function App() {
   return (
