@@ -1,4 +1,4 @@
-import TabButton from '@/components/feature/login/TabButton';
+import TabButton from '@/components/feature/auth/TabButton';
 
 interface LoginTabsProps {
   activeTab: 'student' | 'admin';
