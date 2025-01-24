@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/useAuthStore';
-import PageTitle from '@/components/common/PageTitle';
-import LoginTabs from '@/components/feature/login/LoginTabs';
+import AuthLayout from '@/components/feature/auth/AuthLayout';
+import LoginTabs from '@/components/feature/auth/LoginTabs';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
 
@@ -43,65 +43,58 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <PageTitle>로그인</PageTitle>
-      <div className="w-full max-w-[520px] min-h-[566px] p-20 mt-4 bg-white rounded-[50px] shadow-lg">
-        <LoginTabs activeTab={activeTab} onTabChange={setActiveTab} />
-
-        <form onSubmit={handleSubmit} className="space-y-12">
-          <div className="space-y-8">
-            <Input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="이메일을 입력하세요"
+    <AuthLayout title="로그인">
+      <LoginTabs activeTab={activeTab} onTabChange={setActiveTab} />
+      <form onSubmit={handleSubmit} className="space-y-12">
+        <div className="space-y-8">
+          <Input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="이메일을 입력하세요"
+          />
+          <Input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="비밀번호를 입력하세요"
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <input
+              id="remember-me"
+              type="checkbox"
+              className="w-4 h-4 border-gray-300 rounded text-myongji focus:ring-myongji"
             />
-            <Input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="비밀번호를 입력하세요"
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                type="checkbox"
-                className="w-4 h-4 border-gray-300 rounded text-myongji focus:ring-myongji"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 text-lg text-gray-custom"
-              >
-                로그인 상태 유지
-              </label>
-            </div>
-            <button
-              type="button"
-              onClick={() => navigate('/verify')}
-              className="text-lg text-gray-custom hover:text-gray-800"
+            <label
+              htmlFor="remember-me"
+              className="ml-2 text-lg text-gray-custom"
             >
-              비밀번호 찾기
-            </button>
+              로그인 상태 유지
+            </label>
           </div>
-
-          <Button variant="primary" type="submit">
-            로그인
-          </Button>
-
-          <Button
-            variant="secondary"
-            onClick={() => navigate('/privacy-agreement')}
+          <button
+            type="button"
+            onClick={() => navigate('/verify')}
+            className="text-lg text-gray-custom hover:text-gray-800"
           >
-            회원가입
-          </Button>
-        </form>
-      </div>
-    </div>
+            비밀번호 찾기
+          </button>
+        </div>
+        <Button variant="primary" type="submit">
+          로그인
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => navigate('/privacy-agreement')}
+        >
+          회원가입
+        </Button>
+      </form>
+    </AuthLayout>
   );
 };
 
