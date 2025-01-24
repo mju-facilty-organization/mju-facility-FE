@@ -3,6 +3,7 @@ import App from '@/App';
 import Guide from '@/pages/guide';
 import Login from '@/pages/auth/Login';
 import Verify from '@/pages/auth/Verify';
+import PrivacyAgreement from '@/pages/auth/PrivacyAgreement';
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
       {
         path: '/verify',
         element: <Verify />,
+      },
+      {
+        path: '/privacy-agreement',
+        element: <PrivacyAgreement />,
       },
   },
 ]);
