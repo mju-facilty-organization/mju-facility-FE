@@ -4,6 +4,7 @@ import Guide from '@/pages/guide';
 import Login from '@/pages/auth/Login';
 import Verify from '@/pages/auth/Verify';
 import PrivacyAgreement from '@/pages/auth/PrivacyAgreement';
+import Signup from '@/pages/auth/Signup';
 
 export const router = createBrowserRouter([
   {
@@ -26,5 +27,11 @@ export const router = createBrowserRouter([
         path: '/privacy-agreement',
         element: <PrivacyAgreement />,
       },
+
+      {
+        path: '/signup',
+        element: <Signup />,
+      },
+    ],
   },
 ]);
