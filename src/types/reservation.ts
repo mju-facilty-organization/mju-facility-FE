@@ -1,7 +1,8 @@
 export interface Classroom {
-  id: number;
+  id: string;
   number: string;
   location: string;
   capacity: string;
   facilities: string;
+  imageUrl: string;
 }

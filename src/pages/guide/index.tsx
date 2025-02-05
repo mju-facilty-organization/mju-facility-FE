@@ -46,7 +46,7 @@ const Guide = () => {
                 navigate('/login');
                 return;
               }
-              navigate('/reservation');
+              navigate('/student/reservation');
             }}
           >
             공간 예약하기
