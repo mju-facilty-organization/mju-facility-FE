@@ -1,3 +1,5 @@
+import { TimeSlotData } from '@/types/reservation';
+
 export interface FacilityData {
   id: number;
   facilityType: string;
@@ -6,6 +8,9 @@ export interface FacilityData {
   capacity: number;
   allowedBoundary: string;
   supportFacilities: string[];
+  pic: string;
+  date: string;
+  timeSlot: TimeSlotData;
 }
 
 export interface FacilityInfoProps {
