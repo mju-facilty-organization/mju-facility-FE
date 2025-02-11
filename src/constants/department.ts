@@ -28,14 +28,4 @@ export const DEPARTMENTS = {
   ],
 } as const;
 
-export const BUILDINGS = [
-  '본관',
-  '국제관',
-  '학생회관',
-  'MCC',
-  '도서관',
-  '야외',
-] as const;
-
 export type Department = keyof typeof DEPARTMENTS;
-export type Building = (typeof BUILDINGS)[number];

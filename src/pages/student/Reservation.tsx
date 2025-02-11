@@ -1,10 +1,6 @@
 import { useState } from 'react';
-import {
-  Department,
-  Building,
-  DEPARTMENTS,
-  BUILDINGS,
-} from '@/constants/reservation';
+import { DEPARTMENTS, Department } from '@/constants/department';
+import { BUILDINGS, Building } from '@/constants/building';
 import { Dropdown } from '@/components/feature/student/reservation/Dropdown';
 import { SearchInput } from '@/components/feature/student/reservation/SearchInput';
 import { ClassroomCard } from '@/components/feature/student/reservation/ClassroomCard';
