@@ -6,7 +6,7 @@ import Verify from '@/pages/auth/Verify';
 import PrivacyAgreement from '@/pages/auth/PrivacyAgreement';
 import Signup from '@/pages/auth/Signup';
 import PrivateRoute from '@/components/common/PrivateRoute';
-import Reservation from '@/pages/student/Reservation';
+import ClassroomLookup from '@/pages/student/ClassroomLookup';
 
 export const router = createBrowserRouter([
   {
@@ -39,7 +39,10 @@ export const router = createBrowserRouter([
         path: '/student/reservation',
         element: (
           <PrivateRoute role="STUDENT">
-            <Reservation />
+            <ClassroomLookup />
+          </PrivateRoute>
+        ),
+      },
           </PrivateRoute>
         ),
       },

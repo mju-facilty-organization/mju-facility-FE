@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { DEPARTMENTS, Department } from '@/constants/department';
 import { BUILDINGS, Building } from '@/constants/building';
-import { Dropdown } from '@/components/feature/student/reservation/Dropdown';
-import { SearchInput } from '@/components/feature/student/reservation/SearchInput';
-import { ClassroomCard } from '@/components/feature/student/reservation/ClassroomCard';
+import { ClassroomCard } from '@/components/feature/student/classroom-lookup/ClassroomCard';
+import { Dropdown } from '@/components/feature/student/classroom-lookup/Dropdown';
+import { SearchInput } from '@/components/feature/student/classroom-lookup/SearchInput';
 
 import { useNavigate } from 'react-router-dom';
 
-const Reservation = () => {
+const ClassroomLookup = () => {
   const [selectedBuilding, setSelectedBuilding] = useState<Building>('본관');
   const [selectedDepartment, setSelectedDepartment] = useState<Department | ''>(
     ''
@@ -126,4 +126,4 @@ const Reservation = () => {
   );
 };
 
-export default Reservation;
+export default ClassroomLookup;
