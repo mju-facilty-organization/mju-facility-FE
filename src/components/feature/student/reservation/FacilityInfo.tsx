@@ -37,7 +37,6 @@ export const FacilityInfo = ({
             alt="강의실"
             className="w-full h-72 object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 rounded-lg" />
 
           <div className="grid grid-cols-3 gap-3">
             {visibleThumbnails.map((image, index) => (

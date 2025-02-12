@@ -52,6 +52,7 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+        element: (
           </PrivateRoute>
         ),
       },
