@@ -28,7 +28,12 @@ const Login = () => {
       };
       const mockToken = 'mock-token';
       login(mockUser, mockToken);
-      navigate('/');
+
+      if (mockUser.role === 'ADMIN') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       console.error('Login failed:', error);
     }

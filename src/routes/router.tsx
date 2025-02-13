@@ -9,6 +9,7 @@ import PrivateRoute from '@/components/common/PrivateRoute';
 import ClassroomLookup from '@/pages/student/ClassroomLookup';
 import Reservation from '@/pages/student/Reservation';
 
+import Dashboard from '@/pages/admin/Dashboard';
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -49,6 +50,15 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute role="STUDENT">
             <Reservation />
+          </PrivateRoute>
+        ),
+      },
+      // Admin routes
+      {
+        path: '/admin',
+        element: (
+          <PrivateRoute role="ADMIN">
+            <Dashboard />
           </PrivateRoute>
         ),
       },

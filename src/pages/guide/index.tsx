@@ -2,10 +2,23 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import PageTitle from '@/components/common/PageTitle';
 import ReservationProcess from '@/components/feature/guide/ReservationProcess';
+import { useEffect } from 'react';
 
 const Guide = () => {
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, user } = useAuthStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      if (user?.role === 'ADMIN') {
+        navigate('/admin');
+      } else {
+        navigate('/student/reservation');
+      }
+    }
+  }, [isLoggedIn, user?.role, navigate]);
+
+  if (isLoggedIn) return null;
 
   const normalSteps = [
     '홈페이지 접속',
