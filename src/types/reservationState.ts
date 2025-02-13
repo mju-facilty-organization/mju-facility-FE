@@ -7,23 +7,3 @@ export const RESERVATION_STATES = {
 } as const;
 
 export type ReservationState = keyof typeof RESERVATION_STATES;
-
-export interface TimeSlotData {
-  [key: string]: string;
-}
-export interface TimeValue {
-  hour: string;
-  minute: string;
-}
-
-export interface FormData {
-  date: string;
-  startTime: TimeValue;
-  endTime: TimeValue;
-  groupName: string;
-  attendeesName: string;
-  attendeesCount: string;
-  purpose: UsagePurpose | '';
-  purposeDetail: string;
-  professor: string;
-}

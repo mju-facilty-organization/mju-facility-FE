@@ -1,5 +1,5 @@
 import React from 'react';
-import { RESERVATION_STATES, ReservationState } from '@/types/reservation';
+import { RESERVATION_STATES, ReservationState } from '@/types/reservationState';
 import { FacilityData } from '@/types/facility';
 
 interface TimeTableProps {

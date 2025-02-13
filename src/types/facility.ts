@@ -1,4 +1,6 @@
-import { TimeSlotData } from '@/types/reservation';
+export interface TimeSlotData {
+  [key: string]: string;
+}
 
 export interface FacilityData {
   id: number;
