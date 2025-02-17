@@ -10,6 +10,8 @@ import ClassroomLookup from '@/pages/student/ClassroomLookup';
 import Reservation from '@/pages/student/Reservation';
 
 import Dashboard from '@/pages/admin/Dashboard';
+import ApprovalPage from '@/pages/approval/index';
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -52,6 +54,11 @@ export const router = createBrowserRouter([
             <Reservation />
           </PrivateRoute>
         ),
+      },
+      // Professor routes
+      {
+        path: '/approval/:reservationId',
+        element: <ApprovalPage />,
       },
       // Admin routes
       {
