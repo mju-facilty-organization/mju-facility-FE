@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/useAuthStore';
+import { Calendar, List } from 'lucide-react';
 
 const Sidebar = () => {
   const { user } = useAuthStore();
@@ -18,21 +19,18 @@ const Sidebar = () => {
               to="/student/reservation"
               className="flex items-center px-4 py-3 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
+              <Calendar className="h-5 w-5 mr-3" />
               공간 예약하기
+            </Link>
+          )}
+
+          {isAdmin && (
+            <Link
+              to="/admin/reservations"
+              className="flex items-center px-4 py-3 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+            >
+              <List className="h-5 w-5 mr-3" />
+              시설 예약 리스트
             </Link>
           )}
         </div>

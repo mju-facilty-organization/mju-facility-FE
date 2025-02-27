@@ -10,6 +10,8 @@ import ClassroomLookup from '@/pages/student/ClassroomLookup';
 import Reservation from '@/pages/student/Reservation';
 
 import Dashboard from '@/pages/admin/Dashboard';
+import AdminReservations from '@/pages/admin/AdminReservations';
+
 import ApprovalPage from '@/pages/approval/index';
 
 export const router = createBrowserRouter([
@@ -69,7 +71,11 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path: '/admin/reservations',
         element: (
+          <PrivateRoute role="ADMIN">
+            <AdminReservations />
           </PrivateRoute>
         ),
       },
