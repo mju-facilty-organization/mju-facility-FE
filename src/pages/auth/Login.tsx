@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/store/useAuthStore';
+
+import { useSignin } from '@/hooks/useSignin';
 import AuthLayout from '@/components/feature/auth/AuthLayout';
 import LoginTabs from '@/components/feature/auth/LoginTabs';
 import Input from '@/components/common/Input';
@@ -10,7 +11,7 @@ type TabType = 'student' | 'admin';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { mutate: signin, isPending, error } = useSignin();
   const [activeTab, setActiveTab] = useState<TabType>('student');
   const [formData, setFormData] = useState({
     email: '',
@@ -19,24 +20,11 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const mockUser = {
-        id: '1',
-        name: '김명지',
-        email: formData.email,
-        role: activeTab.toUpperCase() as 'STUDENT' | 'ADMIN',
-      };
-      const mockToken = 'mock-token';
-      login(mockUser, mockToken);
 
-      if (mockUser.role === 'ADMIN') {
-        navigate('/admin');
-      } else {
-        navigate('/');
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
+    signin({
+      email: formData.email,
+      password: formData.password,
+    });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,6 +39,14 @@ const Login = () => {
     <AuthLayout title="로그인">
       <LoginTabs activeTab={activeTab} onTabChange={setActiveTab} />
       <form onSubmit={handleSubmit} className="space-y-12">
+        {error && (
+          <div className="text-red-500 text-sm">
+            {typeof error === 'string'
+              ? error
+              : '로그인 중 오류가 발생했습니다.'}
+          </div>
+        )}
+
         <div className="space-y-8">
           <Input
             type="email"
@@ -58,6 +54,7 @@ const Login = () => {
             value={formData.email}
             onChange={handleChange}
             placeholder="이메일을 입력하세요"
+            required
           />
           <Input
             type="password"
@@ -65,8 +62,10 @@ const Login = () => {
             value={formData.password}
             onChange={handleChange}
             placeholder="비밀번호를 입력하세요"
+            required
           />
         </div>
+
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <input
@@ -89,9 +88,11 @@ const Login = () => {
             비밀번호 찾기
           </button>
         </div>
-        <Button variant="primary" type="submit">
-          로그인
+
+        <Button variant="primary" type="submit" disabled={isPending}>
+          {isPending ? '로그인 중...' : '로그인'}
         </Button>
+
         <Button
           variant="secondary"
           onClick={() => navigate('/privacy-agreement')}

@@ -20,3 +20,11 @@ export async function verifyEmailCode(email: string, authCode: number) {
   const response = await api.post('/email/check-code', { email, authCode });
   return response.data;
 }
+
+export async function signin(email: string, password: string) {
+  const response = await api.post('/students/sign-in', {
+    email,
+    password,
+  });
+  return response.data;
+}
