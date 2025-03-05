@@ -11,6 +11,7 @@ import Reservation from '@/pages/student/Reservation';
 
 import Dashboard from '@/pages/admin/Dashboard';
 import AdminReservations from '@/pages/admin/AdminReservations';
+import AdminFacilities from '@/pages/admin/AdminFacilities';
 
 import ApprovalPage from '@/pages/approval/index';
 
@@ -76,6 +77,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute role="ADMIN">
             <AdminReservations />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: '/admin/facilities',
+        element: (
+          <PrivateRoute role="ADMIN">
+            <AdminFacilities />
           </PrivateRoute>
         ),
       },
