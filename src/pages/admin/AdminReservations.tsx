@@ -87,7 +87,7 @@ const AdminReservations = () => {
   return (
     <div className="p-6 text-lg">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">대여 신청 내역</h1>
+        <h1 className="text-3xl text-myongji font-bold">대여 신청 내역</h1>
         <SearchBar categories={categories} onSearch={handleSearch} />
       </div>
 
