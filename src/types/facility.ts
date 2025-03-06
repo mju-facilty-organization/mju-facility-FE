@@ -1,20 +1,14 @@
-export interface TimeSlotData {
-  [key: string]: string;
-}
-
-export interface FacilityData {
-  id: number;
+export type Facility = {
   facilityType: string;
   facilityNumber: string;
-  images: string[];
+  fileNames: string[];
   capacity: number;
   allowedBoundary: string;
   supportFacilities: string[];
-  pic: string;
-  date: string;
-  timeSlot: TimeSlotData;
-}
-
-export interface FacilityInfoProps {
-  facilityData?: FacilityData;
-}
+  isAvailable: boolean;
+  college: string;
+  startTime: string;
+  endTime: string;
+  id?: number;
+  images?: string[];
+};
