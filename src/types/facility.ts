@@ -2,10 +2,10 @@ export type Facility = {
   facilityType: string;
   facilityNumber: string;
   fileNames: string[];
-  capacity: number;
+  capacity: string;
   allowedBoundary: string;
   supportFacilities: string[];
-  isAvailable: boolean;
+  isAvailable: string;
   college: string;
   startTime: string;
   endTime: string;
