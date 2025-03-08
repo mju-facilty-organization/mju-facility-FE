@@ -6,10 +6,10 @@ import {
 } from '@/api/facility';
 import { Facility } from '@/types/facility';
 
-export function useFacilities(page = 0, size = 10) {
+export function useFacilities(page = 0, size = 10, facilityType?: string) {
   return useQuery({
-    queryKey: ['facilities', page, size],
-    queryFn: () => getFacilities(page, size),
+    queryKey: ['facilities', page, size, facilityType],
+    queryFn: () => getFacilities(page, size, facilityType),
   });
 }
 

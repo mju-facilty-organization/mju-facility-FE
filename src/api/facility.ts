@@ -16,7 +16,17 @@ export async function uploadFileToPresignedUrl(url: string, file: File) {
   });
 }
 
-export async function getFacilities(page = 0, size = 10) {
-  const response = await api.get(`/admin/facilities?page=${page}&size=${size}`);
+export async function getFacilities(
+  page = 0,
+  size = 10,
+  facilityType?: string
+) {
+  let url = `/admin/facilities?page=${page}&size=${size}`;
+
+  if (facilityType) {
+    url += `&facility-type=${facilityType}`;
+  }
+
+  const response = await api.get(url);
   return response.data;
 }
