@@ -2,8 +2,8 @@ export type Facility = {
   facilityType: string;
   facilityNumber: string;
   fileNames: string[];
-  capacity: string;
-  allowedBoundary: string;
+  capacity: number;
+  allowedBoundary: string[];
   supportFacilities: string[];
   isAvailable: string;
   college: string;
