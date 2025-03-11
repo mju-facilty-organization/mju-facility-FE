@@ -3,7 +3,7 @@ import {
   DEPARTMENTS,
   DEPARTMENT_ENGLISH_TO_KOREAN,
 } from '@/constants/department';
-import { BUILDINGS, FACILITY_TYPE_MAP } from '@/constants/building';
+import { BUILDINGS } from '@/constants/building';
 import { ClassroomCard } from '@/components/feature/student/classroom-lookup/ClassroomCard';
 import { Dropdown } from '@/components/feature/student/classroom-lookup/Dropdown';
 import { SearchInput } from '@/components/feature/student/classroom-lookup/SearchInput';
@@ -30,6 +30,7 @@ const ClassroomLookup = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
 
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
 
   const { data, isLoading, isError } = useFacilities(
@@ -87,12 +88,15 @@ const ClassroomLookup = () => {
     setCurrentPage(page);
   };
 
-  const handleReservation = (classroomId: string) => {
-    navigate(`/student/reservation/${classroomId}`);
+  const handleReservation = (id: number | string) => {
+    navigate(`/student/reservation/${id}`);
   };
 
-  const formatFacilities = (supportFacilities: string[]): string => {
-    return supportFacilities.join(', ');
+  const handleImageError = (facilityId: number | string) => {
+    setFailedImages((prev) => ({
+      ...prev,
+      [facilityId.toString()]: true,
+    }));
   };
 
   if (isError) {
@@ -175,42 +179,35 @@ const ClassroomLookup = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredFacilities.map((facility: Facility) => (
-            <ClassroomCard
-              key={facility.id}
-              imageContent={
-                facility.images && facility.images.length > 0 ? (
-                  <img
-                    src={`${import.meta.env.VITE_APP_API_URL}/${
-                      facility.images[0]
-                    }`}
-                    alt="강의실"
-                    className="w-full h-full object-cover"
-                  />
-                ) : facility.fileNames && facility.fileNames.length > 0 ? (
-                  <img
-                    src={`${import.meta.env.VITE_APP_API_URL}/${
-                      facility.fileNames[0]
-                    }`}
-                    alt="강의실"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                    <School size={48} className="text-gray-400" />
-                  </div>
-                )
-              }
-              number={facility.facilityNumber}
-              location={
-                FACILITY_TYPE_MAP[facility.facilityType] ||
-                facility.facilityType
-              }
-              capacity={`${facility.capacity}명`}
-              facilities={formatFacilities(facility.supportFacilities)}
-              onReserve={handleReservation}
-            />
-          ))}
+          {filteredFacilities.map((facility: Facility) => {
+            const facilityId =
+              facility.id?.toString() || facility.facilityNumber;
+            const imageLoadFailed = failedImages[facilityId];
+
+            return (
+              <ClassroomCard
+                key={facility.id}
+                imageContent={
+                  facility.images &&
+                  facility.images.length > 0 &&
+                  !imageLoadFailed ? (
+                    <img
+                      src={facility.images[0]}
+                      alt="강의실"
+                      className="w-full h-full object-cover"
+                      onError={() => handleImageError(facilityId)}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <School size={48} className="text-gray-400" />
+                    </div>
+                  )
+                }
+                facility={facility}
+                onReserve={handleReservation}
+              />
+            );
+          })}
         </div>
       )}
 
