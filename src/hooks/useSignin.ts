@@ -19,10 +19,14 @@ export function useSignin() {
       return response;
     },
     onSuccess: (response) => {
-      const { accessToken, grantType } = response.data;
+      const { accessToken, refreshToken, grantType } = response.data;
       const role = grantType !== 'ROLE_STUDENT' ? 'ADMIN' : 'STUDENT';
 
-      login({ role, name: '' }, `${grantType} ${accessToken}`);
+      login(
+        { role, name: '' },
+        `${grantType} ${accessToken}`,
+        `${grantType} ${refreshToken}`
+      );
 
       navigate(role === 'ADMIN' ? '/admin' : '/');
     },
