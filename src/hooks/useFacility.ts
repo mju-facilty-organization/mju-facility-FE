@@ -3,13 +3,29 @@ import {
   createFacility,
   getFacilities,
   uploadFileToPresignedUrl,
+  getFacilityDetail,
 } from '@/api/facility';
 import { Facility } from '@/types/facility';
 
-export function useFacilities(page = 0, size = 10, facilityType?: string) {
+export function useFacilities(
+  page = 0,
+  size = 10,
+  facilityType?: Facility['facilityType']
+) {
   return useQuery({
     queryKey: ['facilities', page, size, facilityType],
     queryFn: () => getFacilities(page, size, facilityType),
+  });
+}
+
+export function useFacilityDetail(
+  facilityId: Facility['id'] | undefined,
+  date?: string
+) {
+  return useQuery({
+    queryKey: ['facility', facilityId, date],
+    queryFn: () => getFacilityDetail(facilityId!, date),
+    enabled: !!facilityId,
   });
 }
 

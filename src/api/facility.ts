@@ -19,12 +19,26 @@ export async function uploadFileToPresignedUrl(url: string, file: File) {
 export async function getFacilities(
   page = 0,
   size = 10,
-  facilityType?: string
+  facilityType?: Facility['facilityType']
 ) {
   let url = `/admin/facilities?page=${page}&size=${size}`;
 
   if (facilityType) {
     url += `&facility-type=${facilityType}`;
+  }
+
+  const response = await api.get(url);
+  return response.data;
+}
+
+export async function getFacilityDetail(
+  facilityId: Facility['id'],
+  date?: string
+) {
+  let url = `/admin/facilities/${facilityId}`;
+
+  if (date) {
+    url += `?date=${date}`;
   }
 
   const response = await api.get(url);
