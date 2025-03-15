@@ -9,6 +9,6 @@ export type Facility = {
   college: string;
   startTime: string;
   endTime: string;
-  id?: number;
+  id?: string | number;
   images?: string[];
 };
