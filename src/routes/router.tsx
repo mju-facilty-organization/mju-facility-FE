@@ -51,7 +51,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '/student/reservation/:classroomId',
+        path: '/student/reservation/:facilityId',
         element: (
           <PrivateRoute role="STUDENT">
             <Reservation />

@@ -1,35 +1,15 @@
 import React from 'react';
 import { RESERVATION_STATES, ReservationState } from '@/types/reservationState';
-import { FacilityData } from '@/types/facility';
+import { Facility } from '@/types/facility';
 
-interface TimeTableProps {
-  data?: FacilityData;
-}
-
-const MOCK_FACILITY_DATA: FacilityData = {
-  id: 1,
-  facilityType: '본관',
-  facilityNumber: '1350',
-  images: ['test-file1'],
-  capacity: 5,
-  allowedBoundary: '융합소프트웨어학부',
-  supportFacilities: ['구비시설1', '구비시설2'],
-  pic: '교수',
-  date: '2025-02-04',
-  timeSlot: {
-    '11:30': '예약가능',
-    '12:00': '예약가능',
-    '12:30': '예약가능',
-    '13:00': '예약가능',
-    '13:30': '예약가능',
-    '14:00': '예약가능',
-    '14:30': '예약가능',
-    '15:00': '예약완료',
-  },
-};
-
-export const TimeTable: React.FC<TimeTableProps> = ({
-  data = MOCK_FACILITY_DATA,
+export const TimeTable = ({
+  facilityData,
+  selectedDate,
+  onDateChange,
+}: {
+  facilityData: Facility | undefined;
+  selectedDate: string;
+  onDateChange: (date: string) => void;
 }) => {
   const timeSlotLegend = Object.entries(RESERVATION_STATES).map(
     ([state, { label }]) => ({
@@ -39,18 +19,9 @@ export const TimeTable: React.FC<TimeTableProps> = ({
   );
 
   const getReservationState = (status: string): ReservationState => {
-    switch (status) {
-      case '예약가능':
-        return 'AVAILABLE';
-      case '예약완료':
-        return 'COMPLETED';
-      case '예약대기':
-        return 'PENDING';
-      case '현재예약':
-        return 'CURRENT';
-      default:
-        return 'UNAVAILABLE';
-    }
+    return status in RESERVATION_STATES
+      ? (status as ReservationState)
+      : 'UNAVAILABLE';
   };
 
   const generateTimeSlots = () => {
@@ -60,7 +31,7 @@ export const TimeTable: React.FC<TimeTableProps> = ({
         const time = `${hour.toString().padStart(2, '0')}:${minute
           .toString()
           .padStart(2, '0')}`;
-        const status = data?.timeSlot?.[time];
+        const status = facilityData?.timeSlot?.[time];
         slots.push({
           time,
           state: status ? getReservationState(status) : 'UNAVAILABLE',
@@ -70,22 +41,44 @@ export const TimeTable: React.FC<TimeTableProps> = ({
     return slots;
   };
 
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onDateChange(e.target.value);
+  };
+
+  if (!facilityData) {
+    return null;
+  }
+
   const timeSlots = generateTimeSlots();
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <div className="mt-6 px-10">
-      <div className="flex justify-end mb-4 gap-4">
-        {timeSlotLegend.map(({ state, label }) => (
-          <div key={state} className="flex items-center">
-            <div
-              className="w-4 h-4 mr-2"
-              style={{
-                backgroundColor: RESERVATION_STATES[state].color,
-              }}
-            />
-            <span className="text-base text-gray-custom">{label}</span>
-          </div>
-        ))}
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center">
+          <span className="text-xl font-medium mr-4">날짜 선택:</span>
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={handleDateChange}
+            className="border border-gray-300 rounded-md px-3 py-2"
+            min={today}
+          />
+        </div>
+
+        <div className="flex gap-4">
+          {timeSlotLegend.map(({ state, label }) => (
+            <div key={state} className="flex items-center">
+              <div
+                className="w-4 h-4 mr-2"
+                style={{
+                  backgroundColor: RESERVATION_STATES[state].color,
+                }}
+              />
+              <span className="text-base text-gray-custom">{label}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="flex justify-between">
@@ -106,11 +99,15 @@ export const TimeTable: React.FC<TimeTableProps> = ({
             {timeSlots.map((slot, i) => (
               <div
                 key={i}
-                className="w-4 h-full border-r last:border-r-0"
+                className="w-4 h-full border-r last:border-r-0 relative group"
                 style={{
                   backgroundColor: RESERVATION_STATES[slot.state].color,
                 }}
-              />
+              >
+                <div className="hidden group-hover:block absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded whitespace-nowrap">
+                  {slot.time} - {RESERVATION_STATES[slot.state].label}
+                </div>
+              </div>
             ))}
           </div>
         </div>

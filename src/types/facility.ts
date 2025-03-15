@@ -11,4 +11,5 @@ export type Facility = {
   endTime: string;
   id?: string | number;
   images?: string[];
+  timeSlot?: Record<string, string>;
 };

@@ -1,71 +1,126 @@
-import { MapPin, Users, Lightbulb } from 'lucide-react';
-import { useState } from 'react';
-import { FacilityData, FacilityInfoProps } from '@/types/facility';
+import { MapPin, Users, Lightbulb, School } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { FacilityDetailItem } from '@/components/feature/student/reservation/FacilityDetailItem';
-
-const TEMP_DATA: FacilityData = {
-  id: 1,
-  facilityType: '본관',
-  facilityNumber: '1350',
-  images: ['test-file1', 'test-file2', 'test-file3', 'test-file4'],
-  capacity: 5,
-  allowedBoundary: '융합소프트웨어학부',
-  supportFacilities: ['구비시설1', '구비시설2'],
-};
+import { FACILITY_TYPE_MAP } from '@/constants/building';
+import { Facility } from '@/types/facility';
+import { DEPARTMENT_ENGLISH_TO_KOREAN } from '@/constants/department';
 
 export const FacilityInfo = ({
-  facilityData = TEMP_DATA,
-}: FacilityInfoProps) => {
-  const [selectedImage, setSelectedImage] = useState(facilityData.images[0]);
-  const visibleThumbnails = facilityData.images.slice(0, 3);
-  const remainingCount = Math.max(0, facilityData.images.length - 3);
+  facilityData,
+}: {
+  facilityData: Facility | undefined;
+}) => {
+  const [selectedImage, setSelectedImage] = useState<string>('');
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
-  const getImageUrl = (imageId: string) => {
-    return `/api/images/${imageId}`;
+  useEffect(() => {
+    if (facilityData?.images && facilityData.images.length > 0) {
+      setSelectedImage(facilityData.images[0]);
+    }
+
+    setFailedImages({});
+  }, [facilityData]);
+
+  const handleImageError = (imageUrl: string): void => {
+    setFailedImages((prev) => ({
+      ...prev,
+      [imageUrl]: true,
+    }));
+
+    if (
+      selectedImage === imageUrl &&
+      facilityData?.images &&
+      facilityData.images.length > 0
+    ) {
+      const validImages = facilityData.images.filter(
+        (img: string) => !failedImages[img] && img !== imageUrl
+      );
+      if (validImages.length > 0) {
+        setSelectedImage(validImages[0]);
+      }
+    }
   };
+
+  const getKoreanDepartmentName = (englishName: string): string => {
+    return DEPARTMENT_ENGLISH_TO_KOREAN[englishName] || englishName;
+  };
+
+  if (!facilityData) {
+    return null;
+  }
+
+  const availableImages = (facilityData.images || []).filter(
+    (img: string) => !failedImages[img]
+  );
+  const visibleThumbnails = availableImages.slice(0, 3);
+  const remainingCount = Math.max(0, availableImages.length - 3);
+
+  const koreanAllowedBoundary =
+    facilityData.allowedBoundary?.map(getKoreanDepartmentName) || [];
 
   return (
     <div className="bg-white shadow-lg rounded-xl">
       <h3 className="text-2xl font-bold p-6 border-b">
-        {facilityData.facilityType} {facilityData.facilityNumber}
+        {FACILITY_TYPE_MAP[facilityData.facilityType] ||
+          facilityData.facilityType}{' '}
+        {facilityData.facilityNumber}
       </h3>
 
       <div className="flex flex-col md:flex-row p-6 gap-6">
-        <div className="md:w-1/2 ">
-          <img
-            src={getImageUrl(selectedImage)}
-            alt="강의실"
-            className="w-full h-72 object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-          />
+        <div className="md:w-1/2">
+          {selectedImage && !failedImages[selectedImage] ? (
+            <img
+              src={selectedImage}
+              alt="강의실"
+              className="w-full h-72 object-cover rounded-lg"
+              onError={() => handleImageError(selectedImage)}
+            />
+          ) : (
+            <div className="w-full h-72 flex items-center justify-center bg-gray-100 rounded-lg">
+              <School size={64} className="text-gray-400" />
+            </div>
+          )}
 
-          <div className="grid grid-cols-3 gap-3">
-            {visibleThumbnails.map((image, index) => (
-              <div key={image} className="relative">
-                <img
-                  src={getImageUrl(image)}
-                  alt={`강의실 이미지 ${index + 1}`}
-                  className="w-full h-24 object-cover rounded-md hover:opacity-80 transition-opacity cursor-pointer"
-                  onClick={() => setSelectedImage(image)}
-                />
-                {index === 2 && remainingCount > 0 && (
-                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-md cursor-pointer hover:bg-opacity-60 transition-all">
-                    <span className="text-white font-medium">
-                      +{remainingCount}
-                    </span>
-                  </div>
-                )}
-              </div>
-            ))}
+          <div className="grid grid-cols-3 gap-3 mt-3">
+            {visibleThumbnails.length > 0 ? (
+              visibleThumbnails.map((image, index) => (
+                <div key={image} className="relative">
+                  <img
+                    src={image}
+                    alt={`강의실 이미지 ${index + 1}`}
+                    className="w-full h-24 object-cover rounded-md cursor-pointer"
+                    onClick={() => setSelectedImage(image)}
+                    onError={() => handleImageError(image)}
+                  />
+                  {index === 2 && remainingCount > 0 && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-md">
+                      <span className="text-white font-medium">
+                        +{remainingCount}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="w-full h-24 bg-gray-100 rounded-md"></div>
+                <div className="w-full h-24 bg-gray-100 rounded-md"></div>
+                <div className="w-full h-24 bg-gray-100 rounded-md"></div>
+              </>
+            )}
           </div>
         </div>
 
-        <div className="md:w-1/2 bg-gray-50 rounded-xl p-6 h-full">
+        <div className="md:w-1/2 bg-gray-50 rounded-xl p-6">
           <h4 className="text-lg font-semibold mb-4">공간 정보</h4>
           <dl className="space-y-6">
             <FacilityDetailItem
               icon={<MapPin className="w-5 h-5 mr-2 text-gray-400" />}
               label="위치"
-              value={`${facilityData.facilityType} ${facilityData.facilityNumber}`}
+              value={`${
+                FACILITY_TYPE_MAP[facilityData.facilityType] ||
+                facilityData.facilityType
+              } ${facilityData.facilityNumber}`}
             />
             <FacilityDetailItem
               icon={<Users className="w-5 h-5 mr-2 text-gray-400" />}
@@ -75,12 +130,16 @@ export const FacilityInfo = ({
             <FacilityDetailItem
               icon={<Lightbulb className="w-5 h-5 mr-2 text-gray-400" />}
               label="구비 시설"
-              value={facilityData.supportFacilities.join(', ')}
+              value={facilityData.supportFacilities?.join(', ') || '없음'}
             />
             <FacilityDetailItem
               icon={<Users className="w-5 h-5 mr-2 text-gray-400" />}
               label="사용 가능 대상"
-              value={facilityData.allowedBoundary}
+              value={
+                koreanAllowedBoundary.length > 0
+                  ? koreanAllowedBoundary.join(', ')
+                  : '전체'
+              }
             />
           </dl>
         </div>
