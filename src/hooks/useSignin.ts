@@ -22,11 +22,7 @@ export function useSignin() {
       const { accessToken, refreshToken, grantType } = response.data;
       const role = grantType !== 'ROLE_STUDENT' ? 'ADMIN' : 'STUDENT';
 
-      login(
-        { role, name: '' },
-        `${grantType} ${accessToken}`,
-        `${grantType} ${refreshToken}`
-      );
+      login({ role, name: '' }, accessToken, refreshToken);
 
       navigate(role === 'ADMIN' ? '/admin' : '/');
     },
