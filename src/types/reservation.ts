@@ -1,11 +1,9 @@
-export interface Reservation {
-  id: number;
+export type Reservation = {
+  facilityId?: string;
+  startTime: string;
+  endTime: string;
   organization: string;
+  numberOfPeople: string;
+  professorId?: string;
   purpose: string;
-  createAt: string;
-  defineDateTime: string | null;
-  result: '승인대기' | '승인' | '반려' | '완료';
-  facilityResponse: {
-    facilityType: string;
-  };
-}
+};
