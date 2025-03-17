@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   createReservation,
-} from '@/api/rental';
+} from '@/api/reservation';
 import { Reservation } from '@/types/reservation';
 
 export function useCreateReservation() {
