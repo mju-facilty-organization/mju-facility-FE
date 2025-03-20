@@ -41,14 +41,14 @@ export const SearchBar = ({ categories, onSearch }: SearchBarProps) => {
       <div ref={dropdownRef} className="relative">
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="px-4 py-2 bg-[#008FD5]/20 text-[#008FD5] border-2 border-[#008FD5] border-r-0 rounded-l-md hover:bg-[#008FD5]/30 text-lg flex items-center gap-2 w-40 justify-between"
+          className="px-4 py-2 bg-myongji/20 text-myongji border-2 border-myongji border-r-0 rounded-l-md hover:bg-myongji/30 text-lg flex items-center gap-2 w-40 justify-between font-bold"
         >
           <span>{searchCategory}</span>
           <ChevronDown className="w-5 h-5" />
         </button>
 
         {isDropdownOpen && (
-          <div className="absolute z-10 w-40 mt-1 bg-white border-2 border-[#008FD5] rounded-md shadow-lg">
+          <div className="absolute z-10 w-40 mt-1 bg-white border-2 border-myongji rounded-md shadow-lg">
             {categories.map((category) => (
               <button
                 key={category}
@@ -56,7 +56,7 @@ export const SearchBar = ({ categories, onSearch }: SearchBarProps) => {
                   setSearchCategory(category);
                   setIsDropdownOpen(false);
                 }}
-                className="block w-full px-4 py-2 text-left hover:bg-[#008FD5]/20 text-[#008FD5] text-lg"
+                className="block w-full px-4 py-2 text-left hover:bg-myongji/20 text-myongji text-lg font-bold"
               >
                 {category}
               </button>
@@ -74,7 +74,7 @@ export const SearchBar = ({ categories, onSearch }: SearchBarProps) => {
           onKeyDown={(e) => {
             if (e.key === 'Enter') handleSearch();
           }}
-          className="w-64 pl-4 pr-12 py-2 border-2 border-[#008FD5] rounded-r-md focus:outline-none focus:border-[#008FD5] text-lg"
+          className="w-64 pl-4 pr-12 py-2 border-2 border-myongji rounded-r-md focus:outline-none focus:border-myongji text-lg"
         />
         <button
           onClick={handleSearch}
@@ -82,9 +82,9 @@ export const SearchBar = ({ categories, onSearch }: SearchBarProps) => {
           className={`absolute right-0 top-0 h-full px-3 
           ${
             searchText.trim()
-              ? 'text-[#008FD5] hover:text-[#008FD5]/80'
+              ? 'text-myongji hover:text-myongji/80'
               : 'text-gray-300 cursor-not-allowed'
-          }`}
+          } font-bold`}
         >
           <Search className="w-6 h-6" />
         </button>
