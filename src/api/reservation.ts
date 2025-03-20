@@ -10,3 +10,8 @@ export async function getReservations(params = {}) {
   const response = await api.get('/rental', { params });
   return response.data;
 }
+
+export async function getReservationDetail(rentalHistoryId: number) {
+  const response = await api.get(`/rental/${rentalHistoryId}`);
+  return response.data;
+}

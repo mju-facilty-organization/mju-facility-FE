@@ -1,5 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createReservation, getReservations } from '@/api/reservation';
+import {
+  createReservation,
+  getReservations,
+  getReservationDetail,
+} from '@/api/reservation';
 import { Reservation } from '@/types/reservation';
 
 export function useCreateReservation() {
@@ -17,5 +21,13 @@ export function useGetReservations(params = {}) {
   return useQuery({
     queryKey: ['reservations', params],
     queryFn: () => getReservations(params),
+  });
+}
+
+export function useGetReservationDetail(rentalHistoryId: number | undefined) {
+  return useQuery({
+    queryKey: ['reservation', rentalHistoryId],
+    queryFn: () => getReservationDetail(rentalHistoryId as number),
+    enabled: !!rentalHistoryId,
   });
 }
