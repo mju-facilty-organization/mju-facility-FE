@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FacilityInfo } from '@/components/feature/student/reservation/FacilityInfo';
 import { TimeTable } from '@/components/feature/student/reservation/TimeTable';
+import ReservationForm from '@/components/feature/student/reservation/ReservationForm';
 import { useFacilityDetail } from '@/hooks/useFacility';
 import { Facility } from '@/types/facility';
 
@@ -61,6 +62,7 @@ const Reservation = () => {
           selectedDate={selectedDate}
           onDateChange={handleDateChange}
         />
+        <ReservationForm selectedDate={selectedDate} />
       </div>
     </div>
   );
