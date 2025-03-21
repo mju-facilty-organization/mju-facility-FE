@@ -5,3 +5,10 @@ export type Professor = {
   major: string;
   email: string;
 };
+
+export type ProfessorApprovalResponse = {
+  professorName: string;
+  professorAffiliation: string;
+  professorEmail: string;
+  reason: string | null;
+};

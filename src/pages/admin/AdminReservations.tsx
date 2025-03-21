@@ -1,102 +1,100 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { SearchBar } from '@/components/feature/admin/reservationlist/SearchBar';
 import { Reservation } from '@/types/reservation';
 import { formatDate } from '@/utils/date';
-import { getStatusStyles } from '@/utils/statusStyles';
+import { getStatusStyles, getStatusText } from '@/utils/statusStyles';
+import {
+  useGetReservations,
+  useGetReservationDetail,
+} from '@/hooks/useReservation';
+import { FACILITY_TYPE_MAP } from '@/constants/building';
+import Pagination from '@/components/common/Pagination';
+import ReservationDetailModal from '@/components/feature/admin/reservationlist/ReservationDetailModal';
+
+const PAGE_SIZE = 10;
+
+type SearchParams = {
+  page: number;
+  size: number;
+};
 
 const AdminReservations = () => {
-  const [reservations] = useState<Reservation[]>([
-    {
-      id: 1,
-      organization: 'COW',
-      purpose: '동아리 활동',
-      createAt: '2025-02-02T22:49:40.772231',
-      defineDateTime: null,
-      result: '반려',
-      facilityResponse: {
-        facilityType: '1350',
-      },
-    },
-  ]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages] = useState(10);
+  const [searchParams, setSearchParams] = useState<SearchParams>({
+    page: 0,
+    size: PAGE_SIZE,
+  });
+  const [selectedReservationId, setSelectedReservationId] = useState<
+    number | undefined
+  >(undefined);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const categories = ['통합검색', '대여인/단체', '위치', '예약 일시', '상태'];
+  const {
+    data,
+    isLoading,
+    error: queryError,
+    refetch,
+  } = useGetReservations(searchParams.page, searchParams.size);
 
-  const handleSearch = async (category: string, query: string) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      // TODO: API 호출
-      console.log('검색 카테고리:', category);
-      console.log('검색어:', query);
-    } catch (err) {
-      setError('검색 중 오류가 발생했습니다.');
-      console.error('Search error:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // 상세 정보 API 연결
+  const {
+    data: detailData,
+    isLoading: isDetailLoading,
+    error: detailError,
+  } = useGetReservationDetail(selectedReservationId);
+
+  const reservations: Reservation[] = data?.data?.content || [];
+  const totalPages = data?.data?.totalPages || 1;
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    // TODO: API 호출하여 해당 페이지 데이터 가져오기
+    setSearchParams((prev) => ({
+      ...prev,
+      page: page,
+    }));
   };
 
   const handleDetailView = (reservationId: number) => {
-    // TODO: 상세 보기 모달 열기 또는 페이지 이동
-    console.log('상세 보기:', reservationId);
+    setSelectedReservationId(reservationId);
+    setIsModalOpen(true);
   };
 
-  const renderPagination = () => {
-    const pages = [];
-    const maxVisiblePages = 5;
-
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      if (currentPage <= 3) {
-        for (let i = 1; i <= 5; i++) pages.push(i);
-        pages.push('...');
-        pages.push(totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1);
-        pages.push('...');
-        for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
-      } else {
-        pages.push(1);
-        pages.push('...');
-        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
-        pages.push('...');
-        pages.push(totalPages);
-      }
-    }
-
-    return pages;
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => {
+      setSelectedReservationId(undefined);
+    }, 300);
   };
 
-  if (error) {
-    return <div className="p-6 text-red-500 text-center">{error}</div>;
+  const safeFormatDate = (dateString?: string | null) => {
+    return dateString ? formatDate(dateString) : '-';
+  };
+
+  if (queryError) {
+    return (
+      <div className="p-6 text-red-500 text-center">
+        <p>데이터를 불러오는 중 오류가 발생했습니다.</p>
+        <button
+          onClick={() => refetch()}
+          className="mt-4 px-4 py-2 bg-myongji text-white rounded hover:bg-myongji/80"
+        >
+          다시 시도
+        </button>
+      </div>
+    );
   }
 
   return (
     <div className="p-6 text-lg">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl text-myongji font-bold">대여 신청 내역</h1>
-        <SearchBar categories={categories} onSearch={handleSearch} />
       </div>
 
       <div className="bg-white rounded-lg overflow-hidden border border-gray-200">
         <div className="overflow-x-auto">
           {isLoading ? (
-            <div className="text-center py-8">로딩 중...</div>
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-myongji"></div>
+            </div>
           ) : reservations.length === 0 ? (
-            <div className="text-center py-8">검색 결과가 없습니다.</div>
+            <div className="text-center py-8">데이터가 없습니다.</div>
           ) : (
             <table className="min-w-full text-lg">
               <thead>
@@ -112,87 +110,85 @@ const AdminReservations = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 text-lg">
-                {reservations.map((reservation, index) => (
-                  <tr key={reservation.id} className="hover:bg-gray-50">
-                    <td className="py-4 px-5 text-center font-medium">
-                      {index + 1}
-                    </td>
-                    <td className="py-4 px-5 text-center">
-                      {reservation.facilityResponse.facilityType}
-                    </td>
-                    <td className="py-4 px-5 text-center">
-                      {reservation.organization}
-                    </td>
-                    <td className="py-4 px-5 text-center">
-                      {reservation.purpose}
-                    </td>
-                    <td className="py-4 px-5 text-center">
-                      {formatDate(reservation.createAt)}
-                    </td>
-                    <td className="py-4 px-5 text-center">
-                      {formatDate(reservation.defineDateTime)}
-                    </td>
-                    <td className="py-4 px-5 text-center">
-                      <span
-                        className={`px-3 py-2 text-lg rounded-full ${getStatusStyles(
-                          reservation.result
-                        )}`}
-                      >
-                        {reservation.result}
-                      </span>
-                    </td>
-                    <td className="py-4 px-5 text-center">
-                      <button
-                        onClick={() => handleDetailView(reservation.id)}
-                        className="px-4 py-2 text-lg text-white bg-blue-500 rounded hover:bg-blue-600"
-                      >
-                        더보기
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {reservations.map((reservation: Reservation, index: number) => {
+                  const actualIndex =
+                    searchParams.page * searchParams.size + index + 1;
+                  return (
+                    <tr
+                      key={reservation.id || index}
+                      className="hover:bg-gray-50"
+                    >
+                      <td className="py-4 px-5 text-center font-medium">
+                        {actualIndex}
+                      </td>
+                      <td className="py-4 px-5 text-center">
+                        {reservation.facilityResponse?.facilityType
+                          ? FACILITY_TYPE_MAP[
+                              reservation.facilityResponse.facilityType
+                            ] || reservation.facilityResponse.facilityType
+                          : '-'}
+                        {reservation.facilityResponse?.facilityNumber &&
+                          ` - ${reservation.facilityResponse.facilityNumber}`}
+                      </td>
+                      <td className="py-4 px-5 text-center">
+                        {reservation.organization || '-'}
+                      </td>
+                      <td className="py-4 px-5 text-center">
+                        {reservation.purpose || '-'}
+                      </td>
+                      <td className="py-4 px-5 text-center">
+                        {safeFormatDate(reservation.createAt)}
+                      </td>
+                      <td className="py-4 px-5 text-center">
+                        {safeFormatDate(reservation.defineDateTime)}
+                      </td>
+                      <td className="py-4 px-5 text-center">
+                        <span
+                          className={`px-3 py-2 text-lg rounded-full ${getStatusStyles(
+                            reservation.applicationResult || ''
+                          )}`}
+                        >
+                          {getStatusText(reservation.applicationResult || '')}
+                        </span>
+                      </td>
+                      <td className="py-4 px-5 text-center">
+                        <button
+                          onClick={() =>
+                            handleDetailView(reservation.id as number)
+                          }
+                          className="px-4 py-2 text-lg text-white bg-myongji rounded hover:bg-myongji/80"
+                          disabled={!reservation.id}
+                        >
+                          더보기
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           )}
         </div>
 
-        <div className="flex justify-center items-center py-5 bg-gray-50 border-t">
-          <nav className="inline-flex gap-2">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-3 py-2 rounded text-blue-500 disabled:text-gray-300"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            {renderPagination().map((page, index) => (
-              <button
-                key={index}
-                onClick={() =>
-                  typeof page === 'number' && handlePageChange(page)
-                }
-                className={`px-4 py-2 rounded text-lg
-                  ${
-                    page === currentPage
-                      ? 'bg-blue-500 text-white'
-                      : typeof page === 'number'
-                      ? 'text-gray-600 hover:bg-gray-100'
-                      : 'text-gray-400 cursor-default'
-                  }`}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="px-3 py-2 rounded text-blue-500 disabled:text-gray-300"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </nav>
-        </div>
+        {!isLoading && reservations.length > 0 && (
+          <div className="flex justify-center items-center py-5 bg-gray-50 border-t">
+            <Pagination
+              currentPage={searchParams.page}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        )}
       </div>
+
+      {isModalOpen && (
+        <ReservationDetailModal
+          detailData={detailData}
+          isLoading={isDetailLoading}
+          error={detailError}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 };
