@@ -60,7 +60,7 @@ export const router = createBrowserRouter([
       },
       // Professor routes
       {
-        path: '/approval/:reservationId',
+        path: '/approval/professor/:professorApprovalId',
         element: <ApprovalPage />,
       },
       // Admin routes
