@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { useCreateReservation } from '@/hooks/useReservation';
@@ -18,7 +18,7 @@ type ApiResponse = {
 
 type ProfessorInputProps = {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, id: number) => void;
   error?: string;
 };
 
@@ -45,8 +45,8 @@ function ProfessorInput({ value, onChange, error }: ProfessorInputProps) {
       <ProfessorSearchModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSelect={(professorName) => {
-          onChange(professorName);
+        onSelect={(professorName, professorId) => {
+          onChange(professorName, professorId);
         }}
       />
     </div>
@@ -58,6 +58,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
   const navigate = useNavigate();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [professorName, setProfessorName] = useState('');
+  const [professorId, setProfessorId] = useState<number | null>(null);
 
   const {
     control,
@@ -74,14 +75,15 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
       professorId: '',
       startTime: '',
       endTime: '',
+      applicationResult: '',
     },
   });
 
-  useEffect(() => {
-    if (professorName) {
-      setValue('professorId', professorName);
-    }
-  }, [professorName, setValue]);
+  const handleProfessorChange = (name: string, id: number) => {
+    setProfessorName(name);
+    setProfessorId(id);
+    setValue('professorId', id.toString());
+  };
 
   const createReservationMutation = useCreateReservation();
 
@@ -106,7 +108,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
 
       const reservationData: Reservation = {
         ...data,
-        professorId: '1', // 임시로 1 설정
+        professorId: professorId ? professorId.toString() : '',
         facilityId,
         startTime: formattedStartTime,
         endTime: formattedEndTime,
@@ -122,6 +124,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
         setShowSuccessModal(true);
         reset();
         setProfessorName('');
+        setProfessorId(null);
       } else {
         alert(`예약 신청 실패: ${apiResponse.message}`);
       }
@@ -166,6 +169,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
                 errors[name] ? 'border-red-500' : 'border-gray-300'
               } rounded-md`}
               disabled={name === 'endTime' && !startTime}
+              value={field.value?.toString() || ''}
             >
               <option value="">{placeholder}</option>
               {options}
@@ -180,6 +184,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
               } rounded-md`}
               placeholder={placeholder}
               min={type === 'number' ? '1' : undefined}
+              value={field.value?.toString() || ''}
             />
           )
         }
@@ -216,7 +221,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
           <div>
             <ProfessorInput
               value={professorName}
-              onChange={setProfessorName}
+              onChange={handleProfessorChange}
               error={errors.professorId?.message?.toString()}
             />
 
@@ -250,7 +255,11 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
               required: '종료 시간을 선택해주세요',
             },
             timeOptions.map((time) => (
-              <option key={time} value={time} disabled={time <= startTime}>
+              <option
+                key={time}
+                value={time}
+                disabled={startTime ? time <= startTime : false}
+              >
                 {time}
               </option>
             ))

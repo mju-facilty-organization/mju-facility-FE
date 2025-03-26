@@ -9,7 +9,7 @@ import {
 type ProfessorSearchModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (professorName: string) => void;
+  onSelect: (professorName: string, professorId: number) => void;
 };
 
 function ProfessorSearchModal({
@@ -25,8 +25,8 @@ function ProfessorSearchModal({
 
   const [page, setPage] = useState(0);
 
-  const majorOptions = useMemo(() => {
-    return DEPARTMENTS[filters.college as keyof typeof DEPARTMENTS] || [];
+  const majorOptions: readonly string[] = useMemo(() => {
+    return DEPARTMENTS[filters.college as keyof typeof DEPARTMENTS] ?? [];
   }, [filters.college]);
 
   const collegeOptions = useMemo(() => {
@@ -39,23 +39,21 @@ function ProfessorSearchModal({
     }
   }, [majorOptions, filters.major]);
 
+  const queryParams = {
+    page,
+    size: 10,
+    campus: filters.campus,
+    college: filters.college,
+    major: filters.major,
+    enabled: false,
+  };
+
   const {
     data,
     isLoading,
     error: queryError,
     refetch,
-  } = useProfessors(
-    {
-      page,
-      size: 10,
-      campus: filters.campus,
-      college: filters.college,
-      major: filters.major,
-    },
-    {
-      enabled: false,
-    }
-  );
+  } = useProfessors(queryParams);
 
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -75,10 +73,10 @@ function ProfessorSearchModal({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-2xl">
         <div className="flex justify-between items-center p-4 border-b rounded-t-lg">
-          <div className="text-lg font-medium ">담당 교수님 검색</div>
+          <div className="text-lg font-medium">담당 교수님 검색</div>
           <button
             onClick={handleSearch}
-            className="px-6 py-2 bg-white text-myongji  font-bold rounded-md hover:bg-gray-100"
+            className="px-6 py-2 bg-white text-myongji font-bold rounded-md hover:bg-gray-100"
           >
             조회
           </button>
@@ -101,7 +99,7 @@ function ProfessorSearchModal({
                           campus: e.target.value,
                         }))
                       }
-                      className="w-full  border-none focus:outline-none focus:ring-0"
+                      className="w-full border-none focus:outline-none focus:ring-0"
                     >
                       <option value="서울">서울</option>
                       <option value="용인">용인</option>
@@ -176,7 +174,7 @@ function ProfessorSearchModal({
                           key={index}
                           className="p-4 hover:bg-gray-50 cursor-pointer"
                           onClick={() => {
-                            onSelect(professor.name);
+                            onSelect(professor.name, professor.id);
                             onClose();
                           }}
                         >
