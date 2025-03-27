@@ -8,7 +8,7 @@ const Sidebar = () => {
   const isStudent = user?.role === 'STUDENT';
 
   return (
-    <div className="h-full bg-white">
+    <div className="min-h-screen w-80 bg-white border-r border-gray-200">
       <div className="px-6 py-8">
         <h1 className="text-2xl font-bold text-myongji">MJU Space</h1>
       </div>
