@@ -1,7 +1,7 @@
 import { Facility } from '@/types/facility';
 import { ProfessorApprovalResponse } from '@/types/professor';
 
-export type ApprovalStatus = 'WAITING' | 'APPROVED' | 'REJECTED' | '';
+export type ApprovalStatus = 'WAITING' | 'PERMITTED' | 'DENIED' | '';
 
 export type Reservation = {
   facilityId?: string;

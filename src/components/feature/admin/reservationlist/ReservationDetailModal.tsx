@@ -5,10 +5,12 @@ import { FACILITY_TYPE_MAP } from '@/constants/building';
 import { DEPARTMENT_ENGLISH_TO_KOREAN } from '@/constants/department';
 import { Student } from '@/types/student';
 import { ApprovalStatus, ApprovalInfo, Reservation } from '@/types/reservation';
+import { useProcessApproval } from '@/hooks/useApproval';
+import { toast } from 'react-hot-toast';
 
 type ReservationDetailResponse = {
   data: {
-    studentResponse: Student;
+    studentInfoResponse: Student;
     rentalHistoryResponseDto: Reservation;
   };
 };
@@ -19,17 +21,21 @@ const ReservationDetailModal = ({
   isLoading,
   error,
   onSave,
+  refetch,
 }: {
   detailData: ReservationDetailResponse | undefined;
   onClose: () => void;
   isLoading: boolean;
   error: unknown;
   onSave?: (approvalInfo: ApprovalInfo) => void;
+  refetch?: () => void;
 }) => {
   const [approvalInfo, setApprovalInfo] = useState<ApprovalInfo>({
     approvalStatus: '',
     reason: '',
   });
+
+  const processApprovalMutation = useProcessApproval();
 
   useEffect(() => {
     if (detailData?.data) {
@@ -52,12 +58,37 @@ const ReservationDetailModal = ({
     }));
   };
 
-  // 저장 핸들러
   const handleSave = () => {
-    if (onSave) {
-      onSave(approvalInfo);
+    if (!detailData?.data?.rentalHistoryResponseDto?.id) {
+      toast.error('대여 정보를 찾을 수 없습니다.');
+      return;
     }
-    onClose();
+
+    processApprovalMutation.mutate(
+      {
+        professorApprovalId: String(
+          detailData.data.rentalHistoryResponseDto.id
+        ),
+        result: approvalInfo.approvalStatus as 'PERMITTED' | 'DENIED',
+        reason: approvalInfo.reason,
+      },
+      {
+        onSuccess: () => {
+          toast.success('승인 상태가 업데이트되었습니다.');
+          if (onSave) {
+            onSave(approvalInfo);
+          }
+          if (refetch) {
+            refetch();
+          }
+          onClose();
+        },
+        onError: (error) => {
+          console.error('승인 상태 업데이트 오류:', error);
+          toast.error('승인 상태 업데이트 중 오류가 발생했습니다.');
+        },
+      }
+    );
   };
 
   return (
@@ -77,11 +108,13 @@ const ReservationDetailModal = ({
                 <div className="p-3">
                   <span
                     className={getStatusStyles(
-                      detailData.data.rentalHistoryResponseDto.applicationResult
+                      detailData?.data?.rentalHistoryResponseDto
+                        ?.applicationResult || ''
                     )}
                   >
                     {getStatusText(
-                      detailData.data.rentalHistoryResponseDto.applicationResult
+                      detailData?.data?.rentalHistoryResponseDto
+                        ?.applicationResult || ''
                     )}
                   </span>
                 </div>
@@ -96,13 +129,15 @@ const ReservationDetailModal = ({
                         학번
                       </td>
                       <td className="border border-gray-300 p-3 w-1/3">
-                        {detailData.data.studentResponse.studentNumber || '--'}
+                        {detailData?.data?.studentInfoResponse?.studentNumber ||
+                          '--'}
                       </td>
                       <td className="bg-blue-100 border border-gray-300 p-3 w-1/6 text-center">
                         이름
                       </td>
                       <td className="border border-gray-300 p-3 w-1/3">
-                        {detailData.data.studentResponse.studentName || '--'}
+                        {detailData?.data?.studentInfoResponse?.studentName ||
+                          '--'}
                       </td>
                     </tr>
                     <tr>
@@ -110,13 +145,13 @@ const ReservationDetailModal = ({
                         이메일
                       </td>
                       <td className="border border-gray-300 p-3">
-                        {detailData.data.studentResponse.email || '--'}
+                        {detailData?.data?.studentInfoResponse?.email || '--'}
                       </td>
                       <td className="bg-blue-100 border border-gray-300 p-3 text-center">
                         소속 학과
                       </td>
                       <td className="border border-gray-300 p-3">
-                        {detailData.data.studentResponse.major || '--'}
+                        {detailData?.data?.studentInfoResponse?.major || '--'}
                       </td>
                     </tr>
                     <tr>
@@ -124,28 +159,30 @@ const ReservationDetailModal = ({
                         소속 단체
                       </td>
                       <td className="border border-gray-300 p-3">
-                        {detailData.data.rentalHistoryResponseDto
-                          .organization || '--'}
+                        {detailData?.data?.rentalHistoryResponseDto
+                          ?.organization || '--'}
                       </td>
                       <td className="bg-blue-100 border border-gray-300 p-3 text-center">
                         휴대폰 번호
                       </td>
                       <td className="border border-gray-300 p-3">
-                        {detailData.data.studentResponse.phoneNumber || '--'}
+                        {detailData?.data?.studentInfoResponse?.phoneNumber ||
+                          '--'}
                       </td>
                     </tr>
                     <tr>
                       <td className="bg-blue-100 border border-gray-300 p-3 text-center">
-                        계정 상태
+                        상태
                       </td>
                       <td className="border border-gray-300 p-3">
-                        {detailData.data.studentResponse.status || '--'}
+                        {detailData?.data?.studentInfoResponse?.status || '--'}
                       </td>
                       <td className="bg-blue-100 border border-gray-300 p-3 text-center">
                         경고 횟수
                       </td>
                       <td className="border border-gray-300 p-3">
-                        {detailData.data.studentResponse.warning || '0'}회
+                        {detailData?.data?.studentInfoResponse?.warning || '0'}
+                        회
                       </td>
                     </tr>
                   </tbody>
@@ -162,19 +199,19 @@ const ReservationDetailModal = ({
                       </td>
                       <td className="border border-gray-300 p-3 w-1/3">
                         {FACILITY_TYPE_MAP[
-                          detailData.data.rentalHistoryResponseDto
-                            .facilityResponse?.facilityType || ''
+                          detailData?.data?.rentalHistoryResponseDto
+                            ?.facilityResponse?.facilityType || ''
                         ] ||
-                          detailData.data.rentalHistoryResponseDto
-                            .facilityResponse?.facilityType ||
+                          detailData?.data?.rentalHistoryResponseDto
+                            ?.facilityResponse?.facilityType ||
                           '--'}
                       </td>
                       <td className="bg-blue-100 border border-gray-300 p-3 w-1/6 text-center">
                         위치
                       </td>
                       <td className="border border-gray-300 p-3 w-1/3">
-                        {detailData.data.rentalHistoryResponseDto
-                          .facilityResponse?.facilityNumber || '--'}
+                        {detailData?.data?.rentalHistoryResponseDto
+                          ?.facilityResponse?.facilityNumber || '--'}
                       </td>
                     </tr>
                     <tr>
@@ -182,20 +219,20 @@ const ReservationDetailModal = ({
                         담당 교수
                       </td>
                       <td className="border border-gray-300 p-3">
-                        {detailData.data.rentalHistoryResponseDto
-                          .professorApprovalResponse?.professorName || '--'}
+                        {detailData?.data?.rentalHistoryResponseDto
+                          ?.professorApprovalResponse?.professorName || '--'}
                       </td>
                       <td className="bg-blue-100 border border-gray-300 p-3 text-center">
                         담당 소속 학과
                       </td>
                       <td className="border border-gray-300 p-3">
                         {DEPARTMENT_ENGLISH_TO_KOREAN[
-                          detailData.data.rentalHistoryResponseDto
-                            .professorApprovalResponse?.professorAffiliation ||
+                          detailData?.data?.rentalHistoryResponseDto
+                            ?.professorApprovalResponse?.professorAffiliation ||
                             ''
                         ] ||
-                          detailData.data.rentalHistoryResponseDto
-                            .professorApprovalResponse?.professorAffiliation ||
+                          detailData?.data?.rentalHistoryResponseDto
+                            ?.professorApprovalResponse?.professorAffiliation ||
                           '--'}
                       </td>
                     </tr>
@@ -205,15 +242,16 @@ const ReservationDetailModal = ({
                       </td>
                       <td className="border border-gray-300 p-3">
                         {formatDate(
-                          detailData.data.rentalHistoryResponseDto.createAt ||
-                            ''
+                          detailData?.data?.rentalHistoryResponseDto
+                            ?.createAt || ''
                         ) || '--'}
                       </td>
                       <td className="bg-blue-100 border border-gray-300 p-3 text-center">
                         처리 일시
                       </td>
                       <td className="border border-gray-300 p-3">
-                        {detailData.data.rentalHistoryResponseDto.defineDateTime
+                        {detailData?.data?.rentalHistoryResponseDto
+                          ?.defineDateTime
                           ? formatDate(
                               detailData.data.rentalHistoryResponseDto
                                 .defineDateTime
@@ -226,8 +264,8 @@ const ReservationDetailModal = ({
                         교수님 이메일
                       </td>
                       <td className="border border-gray-300 p-3" colSpan={3}>
-                        {detailData.data.rentalHistoryResponseDto
-                          .professorApprovalResponse?.professorEmail || '--'}
+                        {detailData?.data?.rentalHistoryResponseDto
+                          ?.professorApprovalResponse?.professorEmail || '--'}
                       </td>
                     </tr>
                     <tr>
@@ -236,12 +274,13 @@ const ReservationDetailModal = ({
                       </td>
                       <td className="border border-gray-300 p-3" colSpan={3}>
                         {formatDate(
-                          detailData.data.rentalHistoryResponseDto.startTime ||
-                            ''
+                          detailData?.data?.rentalHistoryResponseDto
+                            ?.startTime || ''
                         ) || '--'}{' '}
                         ~{' '}
                         {formatDate(
-                          detailData.data.rentalHistoryResponseDto.endTime || ''
+                          detailData?.data?.rentalHistoryResponseDto?.endTime ||
+                            ''
                         ) || '--'}
                       </td>
                     </tr>
@@ -250,7 +289,7 @@ const ReservationDetailModal = ({
                         사용 목적
                       </td>
                       <td className="border border-gray-300 p-3">
-                        {detailData.data.rentalHistoryResponseDto.purpose ||
+                        {detailData?.data?.rentalHistoryResponseDto?.purpose ||
                           '--'}
                       </td>
                       <td className="bg-blue-100 border border-gray-300 p-3 text-center">
@@ -259,14 +298,16 @@ const ReservationDetailModal = ({
                       <td className="border border-gray-300 p-3">
                         <span
                           className={getStatusStyles(
-                            detailData.data.rentalHistoryResponseDto
-                              .applicationResult || ''
+                            detailData?.data?.rentalHistoryResponseDto
+                              ?.professorApprovalResponse?.applicationResult ||
+                              ''
                           )}
                         >
                           {getStatusText(
-                            detailData.data.rentalHistoryResponseDto
-                              .applicationResult || ''
-                          ) || '--'}
+                            detailData?.data?.rentalHistoryResponseDto
+                              ?.professorApprovalResponse?.applicationResult ||
+                              ''
+                          )}
                         </span>
                       </td>
                     </tr>
@@ -275,8 +316,8 @@ const ReservationDetailModal = ({
                         비고
                       </td>
                       <td className="border border-gray-300 p-3" colSpan={3}>
-                        {detailData.data.rentalHistoryResponseDto
-                          .professorApprovalResponse?.reason || '--'}
+                        {detailData?.data?.rentalHistoryResponseDto
+                          ?.professorApprovalResponse?.reason || '--'}
                       </td>
                     </tr>
                   </tbody>
@@ -295,13 +336,12 @@ const ReservationDetailModal = ({
                       className="border rounded px-2 py-1"
                     >
                       <option value="">상태 선택</option>
-                      <option value="WAITING">승인대기</option>
-                      <option value="APPROVED">승인</option>
-                      <option value="REJECTED">반려</option>
+                      <option value="PERMITTED">승인</option>
+                      <option value="DENIED">반려</option>
                     </select>
                   </div>
 
-                  {approvalInfo.approvalStatus === 'REJECTED' && (
+                  {approvalInfo.approvalStatus === 'DENIED' && (
                     <div className="mt-4">
                       <span className="block mb-2 font-medium">거부 사유:</span>
                       <textarea
@@ -316,7 +356,6 @@ const ReservationDetailModal = ({
                 </div>
               </div>
 
-              {/* 버튼 */}
               <div className="flex justify-center space-x-4 mt-8">
                 <button
                   onClick={onClose}
@@ -326,14 +365,17 @@ const ReservationDetailModal = ({
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-6 py-2 bg-myongji text-white rounded-md hover:bg-myongji/80"
+                  className="px-6 py-2 bg-myongji text-white rounded-md hover:bg-myongji/80 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={
+                    processApprovalMutation.isPending ||
                     !approvalInfo.approvalStatus ||
-                    (approvalInfo.approvalStatus === 'REJECTED' &&
+                    (approvalInfo.approvalStatus === 'DENIED' &&
                       !approvalInfo.reason)
                   }
                 >
-                  저장하기
+                  {processApprovalMutation.isPending
+                    ? '처리 중...'
+                    : '저장하기'}
                 </button>
               </div>
             </div>

@@ -1,3 +1,4 @@
+import { ApprovalStatus } from '@/types/reservation';
 export type Professor = {
   id: number;
   name: string;
@@ -12,4 +13,5 @@ export type ProfessorApprovalResponse = {
   professorAffiliation: string;
   professorEmail: string;
   reason: string | null;
+  applicationResult?: ApprovalStatus;
 };
