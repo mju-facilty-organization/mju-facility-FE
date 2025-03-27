@@ -6,12 +6,27 @@ export async function createReservation(reservationData: Reservation) {
   return response.data;
 }
 
-export async function getReservations(params = {}) {
+export async function getReservations(
+  page = 0,
+  size = 10,
+  additionalParams = {}
+) {
+  const params = {
+    page,
+    size,
+    ...additionalParams,
+  };
+
   const response = await api.get('/rental', { params });
   return response.data;
 }
 
 export async function getReservationDetail(rentalHistoryId: number) {
   const response = await api.get(`/rental/${rentalHistoryId}`);
+  return response.data;
+}
+
+export async function getStudentReservations(studentId: string) {
+  const response = await api.get(`/rental/students/${studentId}`);
   return response.data;
 }

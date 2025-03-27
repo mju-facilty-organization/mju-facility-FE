@@ -6,8 +6,10 @@ import Verify from '@/pages/auth/Verify';
 import PrivacyAgreement from '@/pages/auth/PrivacyAgreement';
 import Signup from '@/pages/auth/Signup';
 import PrivateRoute from '@/components/common/PrivateRoute';
+
 import ClassroomLookup from '@/pages/student/ClassroomLookup';
 import Reservation from '@/pages/student/Reservation';
+import StudentReservationHistory from '@/pages/student/StudentReservationHistory';
 
 import Dashboard from '@/pages/admin/Dashboard';
 import AdminReservations from '@/pages/admin/AdminReservations';
@@ -55,6 +57,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute role="STUDENT">
             <Reservation />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: '/student/my-reservations',
+        element: (
+          <PrivateRoute role="STUDENT">
+            <StudentReservationHistory />
           </PrivateRoute>
         ),
       },

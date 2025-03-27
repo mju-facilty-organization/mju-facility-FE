@@ -3,6 +3,7 @@ import {
   createReservation,
   getReservations,
   getReservationDetail,
+  getStudentReservations,
 } from '@/api/reservation';
 import { Reservation } from '@/types/reservation';
 
@@ -17,10 +18,10 @@ export function useCreateReservation() {
   });
 }
 
-export function useGetReservations(params = {}) {
+export function useGetReservations(page = 0, size = 10, additionalParams = {}) {
   return useQuery({
-    queryKey: ['reservations', params],
-    queryFn: () => getReservations(params),
+    queryKey: ['reservations', page, size, additionalParams],
+    queryFn: () => getReservations(page, size, additionalParams),
   });
 }
 
@@ -29,5 +30,13 @@ export function useGetReservationDetail(rentalHistoryId: number | undefined) {
     queryKey: ['reservation', rentalHistoryId],
     queryFn: () => getReservationDetail(rentalHistoryId as number),
     enabled: !!rentalHistoryId,
+  });
+}
+
+export function useGetStudentReservations(studentId: string | undefined) {
+  return useQuery({
+    queryKey: ['studentReservations', studentId],
+    queryFn: () => getStudentReservations(studentId as string),
+    enabled: !!studentId,
   });
 }

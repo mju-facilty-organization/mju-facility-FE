@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/useAuthStore';
-import { Calendar, List, Building } from 'lucide-react';
+import { Calendar, List, Building, ClipboardList } from 'lucide-react';
 
 const Sidebar = () => {
   const { user } = useAuthStore();
   const isAdmin = user?.role === 'ADMIN';
+  const isStudent = user?.role === 'STUDENT';
 
   return (
     <div className="h-full bg-white">
@@ -14,14 +15,23 @@ const Sidebar = () => {
 
       <nav className="px-4">
         <div className="space-y-2">
-          {!isAdmin && (
-            <Link
-              to="/student/reservation"
-              className="flex items-center px-4 py-3 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
-            >
-              <Calendar className="h-5 w-5 mr-3" />
-              공간 예약하기
-            </Link>
+          {isStudent && (
+            <>
+              <Link
+                to="/student/reservation"
+                className="flex items-center px-4 py-3 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+              >
+                <Calendar className="h-5 w-5 mr-3" />
+                공간 예약하기
+              </Link>
+
+              <Link
+                to="/student/my-reservations"
+                className="flex items-center px-4 py-3 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+              >
+                <ClipboardList className="h-5 w-5 mr-3" />내 예약 내역
+              </Link>
+            </>
           )}
 
           {isAdmin && (
