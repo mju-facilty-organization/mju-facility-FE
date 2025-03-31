@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import App from '@/App';
 import Guide from '@/pages/guide';
 import Login from '@/pages/auth/Login';
@@ -11,7 +12,6 @@ import ClassroomLookup from '@/pages/student/ClassroomLookup';
 import Reservation from '@/pages/student/Reservation';
 import StudentReservationHistory from '@/pages/student/StudentReservationHistory';
 
-import Dashboard from '@/pages/admin/Dashboard';
 import AdminReservations from '@/pages/admin/AdminReservations';
 import AdminFacilities from '@/pages/admin/AdminFacilities';
 
@@ -78,7 +78,7 @@ export const router = createBrowserRouter([
         path: '/admin',
         element: (
           <PrivateRoute role="ADMIN">
-            <Dashboard />
+            <Navigate to="/admin/facilities" replace />
           </PrivateRoute>
         ),
       },
