@@ -5,8 +5,8 @@ export type ApprovalStatus = 'WAITING' | 'PERMITTED' | 'DENIED' | '';
 
 export type Reservation = {
   facilityId?: string;
-  startTime?: string;
-  endTime?: string;
+  startDateTime?: string;
+  endDateTime?: string;
   organization?: string;
   numberOfPeople?: string | number;
   professorId?: string;

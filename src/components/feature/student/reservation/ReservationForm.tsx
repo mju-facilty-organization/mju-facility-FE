@@ -73,8 +73,8 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
       organization: '',
       numberOfPeople: '',
       professorId: '',
-      startTime: '',
-      endTime: '',
+      startDateTime: '',
+      endDateTime: '',
       applicationResult: '',
     },
   });
@@ -87,7 +87,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
 
   const createReservationMutation = useCreateReservation();
 
-  const startTime = watch('startTime');
+  const startDateTime = watch('startDateTime');
 
   const timeOptions = useMemo(
     () =>
@@ -103,15 +103,15 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
 
   const onSubmit = async (data: Reservation) => {
     try {
-      const formattedStartTime = `${selectedDate}T${data.startTime}:00`;
-      const formattedEndTime = `${selectedDate}T${data.endTime}:00`;
+      const formattedStartTime = `${selectedDate}T${data.startDateTime}:00`;
+      const formattedEndTime = `${selectedDate}T${data.endDateTime}:00`;
 
       const reservationData: Reservation = {
         ...data,
         professorId: professorId ? professorId.toString() : '',
         facilityId,
-        startTime: formattedStartTime,
-        endTime: formattedEndTime,
+        startDateTime: formattedStartTime,
+        endDateTime: formattedEndTime,
       };
 
       const response = await createReservationMutation.mutateAsync(
@@ -136,7 +136,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
 
   const handleViewReservations = () => {
     setShowSuccessModal(false);
-    navigate('/student/reservation/${userId}');
+    navigate('/student/my-reservations');
   };
 
   const handleCloseModal = () => {
@@ -168,7 +168,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
               className={`w-full px-4 py-2 border ${
                 errors[name] ? 'border-red-500' : 'border-gray-300'
               } rounded-md`}
-              disabled={name === 'endTime' && !startTime}
+              disabled={name === 'endDateTime' && !startDateTime}
               value={field.value?.toString() || ''}
             >
               <option value="">{placeholder}</option>
@@ -234,7 +234,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
           </div>
 
           {renderField(
-            'startTime',
+            'startDateTime',
             '시작 시간',
             '시작 시간 선택',
             'select',
@@ -247,7 +247,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
           )}
 
           {renderField(
-            'endTime',
+            'endDateTime',
             '종료 시간',
             '종료 시간 선택',
             'select',
@@ -258,7 +258,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
               <option
                 key={time}
                 value={time}
-                disabled={startTime ? time <= startTime : false}
+                disabled={startDateTime ? time <= startDateTime : false}
               >
                 {time}
               </option>
