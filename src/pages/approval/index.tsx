@@ -281,10 +281,12 @@ const ApprovalPage = () => {
 
     updateFormState({ loading: true });
 
+    const professorResult = `PROFESSOR_${result}`;
+
     processApprovalMutation(
       {
         professorApprovalId: professorApprovalId!,
-        result,
+        result: professorResult,
         reason,
       },
       {

@@ -9,15 +9,33 @@ export async function getApprovalData(professorApprovalId: string) {
 
 export async function processApproval(
   professorApprovalId: string,
-  result: ApprovalResult,
+  result: ApprovalResult | string,
   reason: string = ''
 ) {
+  const finalResult = result.startsWith('PROFESSOR_')
+    ? result
+    : `PROFESSOR_${result}`;
+
   const response = await api.post(
     `/approval/professor/${professorApprovalId}`,
     {
-      rentalApplicationResult: result,
+      rentalApplicationResult: finalResult,
       reason: reason,
     }
   );
+  return response.data;
+}
+
+export async function processPicApproval(
+  rentalHistoryId: string,
+  result: ApprovalResult | string,
+  reason: string = ''
+) {
+  const finalResult = result.startsWith('PIC_') ? result : `PIC_${result}`;
+
+  const response = await api.post(`/approval/pic/${rentalHistoryId}`, {
+    rentalApplicationResult: finalResult,
+    reason: reason,
+  });
   return response.data;
 }

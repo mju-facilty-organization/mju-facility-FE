@@ -5,7 +5,7 @@ import { FACILITY_TYPE_MAP } from '@/constants/building';
 import { DEPARTMENT_ENGLISH_TO_KOREAN } from '@/constants/department';
 import { Student } from '@/types/student';
 import { ApprovalStatus, ApprovalInfo, Reservation } from '@/types/reservation';
-import { useProcessApproval } from '@/hooks/useApproval';
+import { useProcessPicApproval } from '@/hooks/useApproval';
 import { toast } from 'react-hot-toast';
 
 type ReservationDetailResponse = {
@@ -35,7 +35,7 @@ const ReservationDetailModal = ({
     reason: '',
   });
 
-  const processApprovalMutation = useProcessApproval();
+  const processPicApprovalMutation = useProcessPicApproval();
 
   useEffect(() => {
     if (detailData?.data) {
@@ -64,11 +64,9 @@ const ReservationDetailModal = ({
       return;
     }
 
-    processApprovalMutation.mutate(
+    processPicApprovalMutation.mutate(
       {
-        professorApprovalId: String(
-          detailData.data.rentalHistoryResponseDto.id
-        ),
+        rentalHistoryId: String(detailData.data.rentalHistoryResponseDto.id),
         result: approvalInfo.approvalStatus as 'PERMITTED' | 'DENIED',
         reason: approvalInfo.reason,
       },
@@ -275,12 +273,12 @@ const ReservationDetailModal = ({
                       <td className="border border-gray-300 p-3" colSpan={3}>
                         {formatDate(
                           detailData?.data?.rentalHistoryResponseDto
-                            ?.startTime || ''
+                            ?.startDateTime || ''
                         ) || '--'}{' '}
                         ~{' '}
                         {formatDate(
-                          detailData?.data?.rentalHistoryResponseDto?.endTime ||
-                            ''
+                          detailData?.data?.rentalHistoryResponseDto
+                            ?.endDateTime || ''
                         ) || '--'}
                       </td>
                     </tr>
@@ -367,13 +365,13 @@ const ReservationDetailModal = ({
                   onClick={handleSave}
                   className="px-6 py-2 bg-myongji text-white rounded-md hover:bg-myongji/80 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={
-                    processApprovalMutation.isPending ||
+                    processPicApprovalMutation.isPending ||
                     !approvalInfo.approvalStatus ||
                     (approvalInfo.approvalStatus === 'DENIED' &&
                       !approvalInfo.reason)
                   }
                 >
-                  {processApprovalMutation.isPending
+                  {processPicApprovalMutation.isPending
                     ? '처리 중...'
                     : '저장하기'}
                 </button>
