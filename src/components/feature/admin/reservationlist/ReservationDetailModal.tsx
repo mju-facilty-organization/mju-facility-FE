@@ -273,12 +273,12 @@ const ReservationDetailModal = ({
                       <td className="border border-gray-300 p-3" colSpan={3}>
                         {formatDate(
                           detailData?.data?.rentalHistoryResponseDto
-                            ?.startDateTime || ''
+                            ?.startTime || ''
                         ) || '--'}{' '}
                         ~{' '}
                         {formatDate(
-                          detailData?.data?.rentalHistoryResponseDto
-                            ?.endDateTime || ''
+                          detailData?.data?.rentalHistoryResponseDto?.endTime ||
+                            ''
                         ) || '--'}
                       </td>
                     </tr>
