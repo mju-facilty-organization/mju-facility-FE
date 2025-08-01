@@ -50,11 +50,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/student/reservation/:facilityId',
-        element: (
-          <PrivateRoute role="STUDENT">
-            <Reservation />
-          </PrivateRoute>
-        ),
+        element: <Reservation />,
       },
       {
         path: '/student/my-reservations',
