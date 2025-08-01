@@ -46,11 +46,7 @@ export const router = createBrowserRouter([
       // Student routes
       {
         path: '/student/reservation',
-        element: (
-          <PrivateRoute role="STUDENT">
-            <ClassroomLookup />
-          </PrivateRoute>
-        ),
+        element: <ClassroomLookup />,
       },
       {
         path: '/student/reservation/:facilityId',

@@ -54,11 +54,6 @@ const Guide = () => {
           <button
             className="bg-myongji text-white px-10 py-4 rounded-lg text-xl hover:bg-opacity-90 transition-colors"
             onClick={() => {
-              if (!isLoggedIn) {
-                alert('로그인이 필요한 서비스입니다.');
-                navigate('/login');
-                return;
-              }
               navigate('/student/reservation');
             }}
           >
