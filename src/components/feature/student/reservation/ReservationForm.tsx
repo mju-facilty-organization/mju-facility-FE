@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { useCreateReservation } from '@/hooks/useReservation';
+import { useAuthStore } from '@/store/useAuthStore';
 import { Reservation } from '@/types/reservation';
 import ProfessorSearchModal from '@/components/feature/student/reservation/ProfessorSearchModal';
 import ReservationSuccessModal from '@/components/feature/student/reservation/ReservationSuccessModal';
@@ -56,6 +57,7 @@ function ProfessorInput({ value, onChange, error }: ProfessorInputProps) {
 function ReservationForm({ selectedDate }: ReservationFormProps) {
   const { facilityId } = useParams<{ facilityId: string }>();
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuthStore();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [professorName, setProfessorName] = useState('');
   const [professorId, setProfessorId] = useState<number | null>(null);
@@ -102,6 +104,12 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
   );
 
   const onSubmit = async (data: Reservation) => {
+    if (!isLoggedIn) {
+      alert('로그인이 필요한 서비스입니다.');
+      navigate('/login');
+      return;
+    }
+
     try {
       const formattedStartTime = `${selectedDate}T${data.startDateTime}:00`;
       const formattedEndTime = `${selectedDate}T${data.endDateTime}:00`;
