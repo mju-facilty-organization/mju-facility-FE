@@ -71,7 +71,7 @@ const StudentReservationHistory = () => {
         </h1>
         {!isLoading && !error && reservations.length > 0 && (
           <a
-            href="/student/reservation"
+            href="/reservation"
             className="px-4 py-2 bg-myongji text-white font-medium rounded-md hover:bg-opacity-90 transition-all"
           >
             새 예약
@@ -105,7 +105,7 @@ const StudentReservationHistory = () => {
             새로운 시설 예약을 진행해보세요
           </p>
           <a
-            href="/student/reservation"
+            href="/reservation"
             className="inline-flex items-center px-6 py-3 bg-myongji text-white font-semibold rounded-lg transition-all duration-300 hover:bg-opacity-90"
           >
             시설 예약하기

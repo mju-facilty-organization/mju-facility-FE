@@ -89,7 +89,7 @@ const ClassroomLookup = () => {
   };
 
   const handleReservation = (id: number | string) => {
-    navigate(`/student/reservation/${id}`);
+    navigate(`/reservation/${id}`);
   };
 
   const handleImageError = (facilityId: number | string) => {

@@ -12,6 +12,10 @@ import ClassroomLookup from '@/pages/student/ClassroomLookup';
 import Reservation from '@/pages/student/Reservation';
 import StudentReservationHistory from '@/pages/student/StudentReservationHistory';
 
+// 건의함 관련 페이지들
+import SuggestionBox from '@/pages/suggestion/SuggestionBox';
+import SuggestionCreate from '@/pages/suggestion/SuggestionCreate';
+
 import AdminReservations from '@/pages/admin/AdminReservations';
 import AdminFacilities from '@/pages/admin/AdminFacilities';
 
@@ -45,15 +49,15 @@ export const router = createBrowserRouter([
       },
       // Student routes
       {
-        path: '/student/reservation',
+        path: '/reservation',
         element: <ClassroomLookup />,
       },
       {
-        path: '/student/reservation/:facilityId',
+        path: '/reservation/:facilityId',
         element: <Reservation />,
       },
       {
-        path: '/student/my-reservations',
+        path: '/my-reservations',
         element: (
           <PrivateRoute role="STUDENT">
             <StudentReservationHistory />

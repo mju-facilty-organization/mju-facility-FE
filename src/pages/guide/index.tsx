@@ -13,7 +13,7 @@ const Guide = () => {
       if (user?.role === 'ADMIN') {
         navigate('/admin');
       } else {
-        navigate('/student/reservation');
+        navigate('/reservation');
       }
     }
   }, [isLoggedIn, user?.role, navigate]);
@@ -54,7 +54,7 @@ const Guide = () => {
           <button
             className="bg-myongji text-white px-10 py-4 rounded-lg text-xl hover:bg-opacity-90 transition-colors"
             onClick={() => {
-              navigate('/student/reservation');
+              navigate('/reservation');
             }}
           >
             공간 예약하기

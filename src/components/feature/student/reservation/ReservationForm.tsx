@@ -144,12 +144,12 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
 
   const handleViewReservations = () => {
     setShowSuccessModal(false);
-    navigate('/student/my-reservations');
+    navigate('/my-reservations');
   };
 
   const handleCloseModal = () => {
     setShowSuccessModal(false);
-    navigate('/student/reservation');
+    navigate('/reservation');
   };
 
   const renderField = (
