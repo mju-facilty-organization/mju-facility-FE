@@ -13,9 +13,7 @@ export default function Layout({ children, className = '' }: LayoutProps) {
   const { user } = useAuthStore();
 
   const commonLayout = (content: ReactNode) => (
-    <div
-      className={`flex-1 bg-[#EDEDED] overflow-x-hidden relative ${className}`}
-    >
+    <div className={`flex-1 bg-[#EDEDED]  relative ${className}`}>
       <div className="absolute inset-0">
         <BackgroundVector position="left" className="hidden sm:block" />
         <BackgroundVector position="right" className="hidden sm:block" />
