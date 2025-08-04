@@ -36,7 +36,7 @@ const Guide = () => {
   regularSteps[2] = '[정기예약] 버튼 클릭';
 
   return (
-    <div className="w-full max-w-[1000px] h-[500px] bg-white rounded-[50px] border-8 border-myongji p-10 overflow-auto mx-auto">
+    <div className="w-full max-w-[1000px] h-[500px] bg-white rounded-[50px] border-8 border-myongji p-10 overflow-x-hidden  mx-auto">
       <PageTitle>온라인 공간 예약 시스템 이용안내</PageTitle>
 
       <div className="space-y-10 max-w-7xl mx-auto mt-4">
