@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import BackgroundVector from '@/components/layout/BackgroundVector';
 import AdminLayout from '@/components/layout/AdminLayout';
-import StudentLayout from '@/components/layout/StudentLayout';
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,8 +12,8 @@ export default function Layout({ children, className = '' }: LayoutProps) {
   const { user } = useAuthStore();
 
   const commonLayout = (content: ReactNode) => (
-    <div className={`flex-1 bg-[#EDEDED]  relative ${className}`}>
-      <div className="absolute inset-0">
+    <div className={`bg-[#EDEDED] relative ${className}`}>
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <BackgroundVector position="left" className="hidden sm:block" />
         <BackgroundVector position="right" className="hidden sm:block" />
       </div>
@@ -32,7 +31,7 @@ export default function Layout({ children, className = '' }: LayoutProps) {
     user.role === 'ADMIN' ? (
       <AdminLayout>{children}</AdminLayout>
     ) : (
-      <StudentLayout>{children}</StudentLayout>
+      <div className="container mx-auto px-4 py-8">{children}</div>
     )
   );
 }

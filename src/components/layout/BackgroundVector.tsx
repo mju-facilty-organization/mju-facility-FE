@@ -10,7 +10,7 @@ const BackgroundVector = memo(
     <div
       className={`absolute top-0 ${
         position === 'left' ? '-left-[5%]' : '-right-[5%]'
-      } w-1/3 h-screen opacity-50 transition-opacity duration-300 hover:opacity-75 ${className}`}
+      } w-1/3 h-full opacity-50 transition-opacity duration-300 hover:opacity-75 ${className}`}
       style={{
         backgroundImage: `url(/background${
           position === 'left' ? '1' : '2'

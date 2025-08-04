@@ -18,7 +18,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen flex flex-col">
         <Header />
-        <Layout>
+        <Layout className="flex-1">
           <Outlet />
         </Layout>
         <Footer />
