@@ -16,7 +16,7 @@ const Header = () => {
         </Link>
       </div>
       <div className="w-full h-14 flex items-center bg-white px-6">
-        {user?.role === 'STUDENT' && (
+        {(user?.role === 'STUDENT' || !user) && (
           <button onClick={toggle} className="p-2 rounded-lg hover:bg-gray-100">
             <Menu size={24} className="text-gray-custom" />
           </button>
