@@ -1,15 +1,19 @@
+import { TimeSlot } from '@/types/timeSlot';
+
 export type Facility = {
+  id: number;
   facilityType: string;
   facilityNumber: string;
-  fileNames: string[];
+  images: string[];
   capacity: number;
   allowedBoundary: string[];
   supportFacilities: string[];
-  isAvailable: string;
+  pic: string;
+  date: string;
+  timeSlot?: TimeSlot;
+  fileNames: string[];
   college: string;
   startTime: string;
   endTime: string;
-  id?: string | number;
-  images?: string[];
-  timeSlot?: Record<string, string>;
+  isAvailable: string;
 };
