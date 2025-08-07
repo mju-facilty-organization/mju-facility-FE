@@ -113,6 +113,13 @@ const Sidebar = () => {
                 <List className="h-5 w-5 mr-3" />
                 시설 예약 리스트
               </Link>
+              <Link
+                to="/suggestions"
+                className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+              >
+                <MessageSquare className="h-5 w-5 mr-3" />
+                건의함
+              </Link>
             </>
           )}
         </div>
