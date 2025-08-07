@@ -6,10 +6,9 @@ import {
   useSuggestionActions,
 } from '@/hooks/useSuggestion';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useFacilities } from '@/hooks/useFacility';
+import { useFacilityMapper } from '@/hooks/useFacilityMapper';
 import { getCategoryOptions, getStatusOptions } from '@/utils/suggestion';
 import type { SuggestionPayload, Suggestion } from '@/types/suggestion';
-import type { Facility } from '@/types/facility';
 
 export const useSuggestionBox = () => {
   const navigate = useNavigate();
@@ -29,6 +28,8 @@ export const useSuggestionBox = () => {
 
   const { isLoggedIn, user } = useAuthStore();
 
+  const { getFacilityId, isLoadingFacilities } = useFacilityMapper();
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -44,27 +45,6 @@ export const useSuggestionBox = () => {
       ...(selectedStatus && { status: selectedStatus }),
     }),
     [debouncedSearchTerm, selectedCategory, selectedStatus]
-  );
-
-  const { data: facilitiesData, isLoading: isLoadingFacilities } =
-    useFacilities(0, 1000);
-
-  const facilityNumberToIdMap = useMemo(() => {
-    if (!facilitiesData?.data?.content) return {};
-
-    const map: Record<string, number> = {};
-    facilitiesData.data.content.forEach((facility: Facility) => {
-      map[facility.facilityNumber] = facility.id;
-    });
-
-    return map;
-  }, [facilitiesData?.data?.content]);
-
-  const getFacilityId = useCallback(
-    (facilityNumber: string): number => {
-      return facilityNumberToIdMap[facilityNumber] || 1;
-    },
-    [facilityNumberToIdMap]
   );
 
   const {
