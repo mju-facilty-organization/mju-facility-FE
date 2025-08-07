@@ -13,6 +13,7 @@ import Reservation from '@/pages/student/Reservation';
 import StudentReservationHistory from '@/pages/student/StudentReservationHistory';
 
 import Suggestions from '@/pages/suggestion/index';
+import SuggestionFormPage from '@/pages/suggestion/suggestionForm';
 
 import AdminReservations from '@/pages/admin/AdminReservations';
 import AdminFacilities from '@/pages/admin/AdminFacilities';
@@ -66,6 +67,10 @@ export const router = createBrowserRouter([
       {
         path: '/suggestions',
         element: <Suggestions />,
+      },
+      {
+        path: '/suggestions/create',
+        element: <SuggestionFormPage />,
       },
       // Professor routes
       {
