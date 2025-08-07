@@ -8,8 +8,14 @@ export type Suggestion = {
   statusCode: string;
   maskedStudentName: string;
   facilityNumber: string;
-  facilityId: number;
   answer: string | null;
   answeredAt: string | null;
   createdAt: string;
+};
+
+export type SuggestionPayload = {
+  category: string;
+  facilityId: number;
+  title: string;
+  content: string;
 };
