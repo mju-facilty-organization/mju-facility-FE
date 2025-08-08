@@ -1,4 +1,5 @@
 import { useSuggestionBox } from '@/hooks/useSuggestionBox';
+import { useSuggestionAdminActions } from '@/hooks/useSuggestion';
 import { SuggestionHeader } from '@/components/feature/suggestion/SuggestionHeader';
 import { SuggestionFilters } from '@/components/feature/suggestion/SuggestionFilters';
 import { SuggestionLoading } from '@/components/feature/suggestion/SuggestionLoading';
@@ -45,6 +46,25 @@ const Suggestion = () => {
     handleEditFormChange,
   } = useSuggestionBox();
 
+  const adminActions = useSuggestionAdminActions();
+
+  const handleCreateAnswer = (suggestionId: number, answer: string) => {
+    adminActions.createAnswer(suggestionId, answer);
+  };
+
+  const handleUpdateAnswer = (suggestionId: number, answer: string) => {
+    adminActions.updateAnswer(suggestionId, answer);
+  };
+
+  const handleUpdateStatus = (
+    suggestionId: number,
+    status: 'RECEIVED' | 'IN_REVIEW' | 'COMPLETED'
+  ) => {
+    adminActions.updateStatus(suggestionId, status);
+  };
+
+  const totalIsActionLoading = isActionLoading || adminActions.isLoading;
+
   return (
     <div className="max-w-7xl mx-auto">
       <SuggestionHeader
@@ -80,14 +100,18 @@ const Suggestion = () => {
               suggestion={suggestion}
               isLoggedIn={isLoggedIn}
               isMyPosts={isMyPosts}
-              isActionLoading={isActionLoading}
+              isActionLoading={totalIsActionLoading}
               editingId={editingId}
               editForm={editForm}
+              userRole={user?.role}
               onEdit={handleEdit}
               onDelete={handleDelete}
               onEditFormChange={handleEditFormChange}
               onSaveEdit={handleSaveEdit}
               onCancelEdit={handleCancelEdit}
+              onCreateAnswer={handleCreateAnswer}
+              onUpdateAnswer={handleUpdateAnswer}
+              onUpdateStatus={handleUpdateStatus}
             />
           ))}
         </div>
@@ -97,14 +121,18 @@ const Suggestion = () => {
         <SuggestionEmptyState isMyPosts={isMyPosts} />
       )}
 
-      {!isMyPosts && !isLoading && !isLoadingFacilities && currentData && (
-        <SuggestionStatistics
-          total={currentData.total || suggestions.length}
-          received={statistics.received}
-          inReview={statistics.inReview}
-          completed={statistics.completed}
-        />
-      )}
+      {!isMyPosts &&
+        !isLoading &&
+        !isLoadingFacilities &&
+        currentData &&
+        user?.role === 'ADMIN' && (
+          <SuggestionStatistics
+            total={statistics.total}
+            received={statistics.received}
+            inReview={statistics.reviewing}
+            completed={statistics.completed}
+          />
+        )}
     </div>
   );
 };

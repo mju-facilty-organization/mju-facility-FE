@@ -9,6 +9,7 @@ type SuggestionFiltersProps = {
   selectedStatus: string;
   setSelectedStatus: (status: string) => void;
   isMyPosts: boolean;
+  userRole?: string;
   setIsMyPosts: (isMyPosts: boolean) => void;
   isLoggedIn: boolean;
   categoryOptions: Array<{ value: string; label: string }>;
@@ -25,7 +26,9 @@ export const SuggestionFilters: React.FC<SuggestionFiltersProps> = ({
   setSelectedStatus,
   isMyPosts,
   setIsMyPosts,
+
   isLoggedIn,
+  userRole,
   categoryOptions,
   statusOptions,
   onResetFilters,
@@ -89,7 +92,7 @@ export const SuggestionFilters: React.FC<SuggestionFiltersProps> = ({
           </div>
         </div>
         <div className="flex gap-2">
-          {isLoggedIn && (
+          {isLoggedIn && userRole === 'STUDENT' && (
             <button
               onClick={handleMyPostsToggle}
               className={`px-4 py-2.5 rounded-lg font-medium transition-colors ${

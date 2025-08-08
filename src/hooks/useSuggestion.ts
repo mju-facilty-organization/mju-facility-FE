@@ -7,6 +7,10 @@ import {
   createSuggestion,
   updateSuggestion,
   deleteSuggestion,
+  createSuggestionAnswer,
+  updateSuggestionAnswer,
+  updateSuggestionStatus,
+  getSuggestionStatics,
 } from '@/api/suggestions';
 
 export const useSuggestions = (filter = {}) => {
@@ -88,6 +92,81 @@ export const useDeleteSuggestion = () => {
   });
 };
 
+export const useCreateSuggestionAnswer = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      suggestionId,
+      answer,
+    }: {
+      suggestionId: number;
+      answer: string;
+    }) => createSuggestionAnswer(suggestionId, answer),
+    onSuccess: (variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['suggestion', variables.suggestionId],
+      });
+      queryClient.invalidateQueries({ queryKey: ['suggestions'] });
+      toast.success('건의사항 답변이 등록되었습니다.');
+    },
+    onError: (error: Error) => {
+      console.error('건의사항 답변 등록 실패:', error);
+      toast.error('건의사항 답변 등록에 실패했습니다.');
+    },
+  });
+};
+
+export const useUpdateSuggestionAnswer = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      suggestionId,
+      answer,
+    }: {
+      suggestionId: number;
+      answer: string;
+    }) => updateSuggestionAnswer(suggestionId, answer),
+    onSuccess: (variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['suggestion', variables.suggestionId],
+      });
+      queryClient.invalidateQueries({ queryKey: ['suggestions'] });
+      toast.success('건의사항 답변이 수정되었습니다.');
+    },
+    onError: (error: Error) => {
+      console.error('건의사항 답변 수정 실패:', error);
+      toast.error('건의사항 답변 수정에 실패했습니다.');
+    },
+  });
+};
+
+export const useUpdateSuggestionStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      suggestionId,
+      status,
+    }: {
+      suggestionId: number;
+      status: 'RECEIVED' | 'IN_REVIEW' | 'COMPLETED';
+    }) => updateSuggestionStatus(suggestionId, status),
+    onSuccess: (variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['suggestion', variables.suggestionId],
+      });
+      queryClient.invalidateQueries({ queryKey: ['suggestions'] });
+      toast.success('건의사항 상태가 변경되었습니다.');
+    },
+    onError: (error: Error) => {
+      console.error('건의사항 상태 변경 실패:', error);
+      toast.error('건의사항 상태 변경에 실패했습니다.');
+    },
+  });
+};
+
 export const useSuggestionActions = () => {
   const createMutation = useCreateSuggestion();
   const updateMutation = useUpdateSuggestion();
@@ -103,4 +182,33 @@ export const useSuggestionActions = () => {
       updateMutation.isPending ||
       deleteMutation.isPending,
   };
+};
+
+export const useSuggestionAdminActions = () => {
+  const createAnswerMutation = useCreateSuggestionAnswer();
+  const updateAnswerMutation = useUpdateSuggestionAnswer();
+  const updateStatusMutation = useUpdateSuggestionStatus();
+
+  return {
+    createAnswer: (suggestionId: number, answer: string) =>
+      createAnswerMutation.mutate({ suggestionId, answer }),
+    updateAnswer: (suggestionId: number, answer: string) =>
+      updateAnswerMutation.mutate({ suggestionId, answer }),
+    updateStatus: (
+      suggestionId: number,
+      status: 'RECEIVED' | 'IN_REVIEW' | 'COMPLETED'
+    ) => updateStatusMutation.mutate({ suggestionId, status }),
+    isLoading:
+      createAnswerMutation.isPending ||
+      updateAnswerMutation.isPending ||
+      updateStatusMutation.isPending,
+  };
+};
+
+export const useSuggestionStatistics = (filter = {}) => {
+  return useQuery({
+    queryKey: ['suggestion-statistics', filter],
+    queryFn: () => getSuggestionStatics(filter),
+    staleTime: 5 * 60 * 1000,
+  });
 };

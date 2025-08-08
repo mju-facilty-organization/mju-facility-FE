@@ -4,6 +4,7 @@ import {
   useSuggestions,
   useMySuggestions,
   useSuggestionActions,
+  useSuggestionStatistics,
 } from '@/hooks/useSuggestion';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useFacilityMapper } from '@/hooks/useFacilityMapper';
@@ -27,7 +28,6 @@ export const useSuggestionBox = () => {
   });
 
   const { isLoggedIn, user } = useAuthStore();
-
   const { getFacilityId, isLoadingFacilities } = useFacilityMapper();
 
   useEffect(() => {
@@ -61,6 +61,7 @@ export const useSuggestionBox = () => {
     enabled: isLoggedIn && isMyPosts,
   });
 
+  const { data: statisticsData } = useSuggestionStatistics(filterParams);
   const {
     update,
     delete: deleteSuggestion,
@@ -71,20 +72,15 @@ export const useSuggestionBox = () => {
   const suggestions: Suggestion[] = currentData?.data || [];
   const isLoading = isMyPosts ? isLoadingMyPosts : isLoadingSuggestions;
 
+  const statistics = statisticsData?.data || {
+    total: 0,
+    received: 0,
+    reviewing: 0,
+    completed: 0,
+  };
+
   const categoryOptions = useMemo(() => getCategoryOptions(), []);
   const statusOptions = useMemo(() => getStatusOptions(), []);
-
-  const statistics = useMemo(() => {
-    if (!suggestions.length) {
-      return { received: 0, inReview: 0, completed: 0 };
-    }
-
-    return {
-      received: suggestions.filter((s) => s.statusCode === 'RECEIVED').length,
-      inReview: suggestions.filter((s) => s.statusCode === 'IN_REVIEW').length,
-      completed: suggestions.filter((s) => s.statusCode === 'COMPLETED').length,
-    };
-  }, [suggestions]);
 
   const resetFilters = useCallback(() => {
     setSearchTerm('');
