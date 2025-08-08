@@ -17,7 +17,7 @@ import SuggestionFormPage from '@/pages/suggestion/suggestionForm';
 
 import AdminReservations from '@/pages/admin/AdminReservations';
 import AdminFacilities from '@/pages/admin/AdminFacilities';
-
+import AdminFacilityCreate from '@/pages/admin/AdminFacilityCreate';
 import ApprovalPage from '@/pages/approval/index';
 
 export const router = createBrowserRouter([
@@ -102,6 +102,7 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      { path: '/admin/facilities/create', element: <AdminFacilityCreate /> },
     ],
   },
 ]);

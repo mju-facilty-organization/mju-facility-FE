@@ -5,6 +5,7 @@ import {
   Calendar,
   List,
   Building,
+  Building2,
   ClipboardList,
   MessageSquare,
   X,
@@ -103,7 +104,14 @@ const Sidebar = () => {
                 className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
               >
                 <Building className="h-5 w-5 mr-3" />
-                시설 관리
+                시설 목록
+              </Link>
+              <Link
+                to="/admin/facilities/create"
+                className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+              >
+                <Building2 className="h-5 w-5 mr-3" />
+                시설 생성
               </Link>
 
               <Link
