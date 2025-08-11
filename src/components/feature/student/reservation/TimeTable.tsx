@@ -26,7 +26,7 @@ export const TimeTable = ({
 
   const generateTimeSlots = () => {
     const slots: { time: string; state: ReservationState }[] = [];
-    for (let hour = 6; hour < 24; hour++) {
+    for (let hour = 8; hour < 22; hour++) {
       for (const minute of [0, 30]) {
         const time = `${hour.toString().padStart(2, '0')}:${minute
           .toString()
@@ -84,31 +84,45 @@ export const TimeTable = ({
       <div className="flex justify-between">
         <div className="flex flex-col shrink-0">
           <span className="text-xl text-gray-custom mb-2">예약 가능 시간</span>
-          <span className="text-lg text-gray-custom">평일 06:00 ~ 24:00</span>
+          <span className="text-lg text-gray-custom">평일 08:00 ~ 22:00</span>
         </div>
 
         <div className="overflow-x-auto">
           <div className="flex">
-            {Array.from({ length: 18 }, (_, i) => (
+            {Array.from({ length: 14 }, (_, i) => (
               <div key={i} className="w-8 flex">
-                <span className="text-sm text-gray-custom">{i + 6}</span>
+                <span className="text-sm text-gray-custom">{i + 8}</span>
               </div>
             ))}
           </div>
           <div className="h-12 flex mt-2">
-            {timeSlots.map((slot, i) => (
-              <div
-                key={i}
-                className="w-4 h-full border-r last:border-r-0 relative group"
-                style={{
-                  backgroundColor: RESERVATION_STATES[slot.state].color,
-                }}
-              >
-                <div className="hidden group-hover:block absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded whitespace-nowrap">
-                  {slot.time} - {RESERVATION_STATES[slot.state].label}
+            {timeSlots.map((slot, i) => {
+              const isLeftEdge = i < 4;
+              const isRightEdge = i >= timeSlots.length - 4;
+
+              let tooltipPosition = 'left-1/2 transform -translate-x-1/2';
+              if (isLeftEdge) {
+                tooltipPosition = 'left-0';
+              } else if (isRightEdge) {
+                tooltipPosition = 'right-0';
+              }
+
+              return (
+                <div
+                  key={i}
+                  className="w-4 h-full border-r last:border-r-0 relative group"
+                  style={{
+                    backgroundColor: RESERVATION_STATES[slot.state].color,
+                  }}
+                >
+                  <div
+                    className={`hidden group-hover:block absolute bottom-full mb-1 ${tooltipPosition} bg-black text-white text-xs py-1 px-2 rounded whitespace-nowrap z-10`}
+                  >
+                    {slot.time} - {RESERVATION_STATES[slot.state].label}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
