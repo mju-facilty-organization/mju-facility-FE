@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useSidebarStore } from '@/store/useSidebarStore';
 import {
@@ -9,6 +10,8 @@ import {
   ClipboardList,
   MessageSquare,
   X,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -16,6 +19,23 @@ const Sidebar = () => {
   const { close } = useSidebarStore();
   const isAdmin = user?.role === 'ADMIN';
   const isStudent = user?.role === 'STUDENT';
+
+  const [expandedMenus, setExpandedMenus] = useState<{
+    reservation: boolean;
+    facility: boolean;
+    schedule: boolean;
+  }>({
+    reservation: false,
+    facility: false,
+    schedule: false,
+  });
+
+  const toggleMenu = (menuKey: keyof typeof expandedMenus) => {
+    setExpandedMenus((prev) => ({
+      ...prev,
+      [menuKey]: !prev[menuKey],
+    }));
+  };
 
   return (
     <div className="min-h-screen w-80 bg-white border-r border-gray-200 rounded-r-xl shadow-sm">
@@ -99,34 +119,97 @@ const Sidebar = () => {
 
           {isAdmin && (
             <>
-              <Link
-                to="/admin/facilities"
-                className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
-              >
-                <Building className="h-5 w-5 mr-3" />
-                시설 목록
-              </Link>
-              <Link
-                to="/admin/facilities/create"
-                className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
-              >
-                <Building2 className="h-5 w-5 mr-3" />
-                시설 생성
-              </Link>
-              <Link
-                to="/admin/schedules/regular"
-                className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
-              >
-                <Calendar className="h-5 w-5 mr-3" />
-                정기 스케줄 생성
-              </Link>
-              <Link
-                to="/admin/reservations"
-                className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
-              >
-                <List className="h-5 w-5 mr-3" />
-                시설 예약 리스트
-              </Link>
+              <div>
+                <button
+                  onClick={() => toggleMenu('reservation')}
+                  className="w-full flex items-center justify-between px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-gray-100 transition-all duration-200"
+                >
+                  <div className="flex items-center">
+                    <List className="h-5 w-5 mr-3" />
+                    예약
+                  </div>
+                  {expandedMenus.reservation ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
+                </button>
+                {expandedMenus.reservation && (
+                  <div className="ml-6 mt-1 space-y-1">
+                    <Link
+                      to="/admin/reservations"
+                      className="flex items-center px-6 py-3 text-gray-custom text-lg rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+                    >
+                      <List className="h-4 w-4 mr-3" />
+                      예약 리스트
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <button
+                  onClick={() => toggleMenu('facility')}
+                  className="w-full flex items-center justify-between px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-gray-100 transition-all duration-200"
+                >
+                  <div className="flex items-center">
+                    <Building className="h-5 w-5 mr-3" />
+                    시설
+                  </div>
+                  {expandedMenus.facility ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
+                </button>
+                {expandedMenus.facility && (
+                  <div className="ml-6 mt-1 space-y-1">
+                    <Link
+                      to="/admin/facilities"
+                      className="flex items-center px-6 py-3 text-gray-custom text-lg rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+                    >
+                      <Building className="h-4 w-4 mr-3" />
+                      시설 목록
+                    </Link>
+                    <Link
+                      to="/admin/facilities/create"
+                      className="flex items-center px-6 py-3 text-gray-custom text-lg rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+                    >
+                      <Building2 className="h-4 w-4 mr-3" />
+                      시설 생성
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <button
+                  onClick={() => toggleMenu('schedule')}
+                  className="w-full flex items-center justify-between px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-gray-100 transition-all duration-200"
+                >
+                  <div className="flex items-center">
+                    <Calendar className="h-5 w-5 mr-3" />
+                    스케줄
+                  </div>
+                  {expandedMenus.schedule ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
+                </button>
+                {expandedMenus.schedule && (
+                  <div className="ml-6 mt-1 space-y-1">
+                    <Link
+                      to="/admin/schedules/regular"
+                      className="flex items-center px-6 py-3 text-gray-custom text-lg rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+                    >
+                      <Calendar className="h-4 w-4 mr-3" />
+                      정기 스케줄 생성
+                    </Link>
+                  </div>
+                )}
+              </div>
+
               <Link
                 to="/suggestions"
                 className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
