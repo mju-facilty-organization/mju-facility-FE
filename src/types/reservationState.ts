@@ -3,7 +3,6 @@ export const RESERVATION_STATES = {
   AVAILABLE: { label: '예약가능', color: '#008FD5' },
   RESERVED: { label: '예약완료', color: '#767676' },
   WAITING: { label: '예약대기', color: '#002E66' },
-  CURRENT: { label: '현재예약', color: '#FFB800' },
 } as const;
 
 export type ReservationState = keyof typeof RESERVATION_STATES;
