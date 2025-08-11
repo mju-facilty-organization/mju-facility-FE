@@ -113,7 +113,13 @@ const Sidebar = () => {
                 <Building2 className="h-5 w-5 mr-3" />
                 시설 생성
               </Link>
-
+              <Link
+                to="/admin/schedules/regular"
+                className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+              >
+                <Calendar className="h-5 w-5 mr-3" />
+                정기 스케줄 생성
+              </Link>
               <Link
                 to="/admin/reservations"
                 className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"

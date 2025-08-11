@@ -19,6 +19,7 @@ import AdminReservations from '@/pages/admin/AdminReservations';
 import AdminFacilities from '@/pages/admin/AdminFacilities';
 import AdminFacilityCreate from '@/pages/admin/AdminFacilityCreate';
 import ApprovalPage from '@/pages/approval/index';
+import AdminRegularSchedule from '@/pages/admin/AdminRegularSchedule';
 
 export const router = createBrowserRouter([
   {
@@ -102,7 +103,22 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
-      { path: '/admin/facilities/create', element: <AdminFacilityCreate /> },
+      {
+        path: '/admin/facilities/create',
+        element: (
+          <PrivateRoute role="ADMIN">
+            <AdminFacilityCreate />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: '/admin/schedules/regular',
+        element: (
+          <PrivateRoute role="ADMIN">
+            <AdminRegularSchedule />
+          </PrivateRoute>
+        ),
+      },
     ],
   },
 ]);
