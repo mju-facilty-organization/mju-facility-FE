@@ -8,7 +8,7 @@ interface AdminLayoutProps {
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   return (
     <div className="flex h-full">
-      <aside className="w-72 md:w-80 lg:w-96">
+      <aside className="w-72 md:w-80 lg:w-90 pr-2">
         <Sidebar />
       </aside>
       <main className="flex-1">
