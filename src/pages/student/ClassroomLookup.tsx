@@ -140,7 +140,7 @@ const ClassroomLookup = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-6 mb-8">
+      <div className="flex flex-wrap justify-between gap-6 mb-8">
         <div className="flex gap-4">
           <Dropdown
             value={selectedDepartment}
@@ -161,7 +161,7 @@ const ClassroomLookup = () => {
           />
         </div>
 
-        <div className="flex-grow" />
+        <div />
         <SearchInput
           value={searchQuery}
           onChange={handleSearch}
