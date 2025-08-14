@@ -79,6 +79,7 @@ const Suggestion = () => {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
         selectedStatus={selectedStatus}
+        userRole={user?.role}
         setSelectedStatus={setSelectedStatus}
         isMyPosts={isMyPosts}
         setIsMyPosts={setIsMyPosts}
