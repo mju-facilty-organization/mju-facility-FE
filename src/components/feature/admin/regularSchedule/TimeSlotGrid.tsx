@@ -37,7 +37,6 @@ const TimeSlotGrid = ({
 
       <div className="overflow-x-auto">
         <div className="min-w-[800px]" style={{ userSelect: 'none' }}>
-          {/* 헤더 */}
           <div className="grid grid-cols-8 border-b bg-gray-50">
             <div className="p-2 text-center font-medium border-r">시간</div>
             {dayOrder.map((day) => (
@@ -46,12 +45,9 @@ const TimeSlotGrid = ({
               </div>
             ))}
           </div>
-
-          {/* 시간 슬롯들 (8시부터 22시까지) */}
           <div className="relative">
             {Array.from({ length: 14 }, (_, hour) => (
               <React.Fragment key={hour}>
-                {/* 정시 */}
                 <div className="grid grid-cols-8 border-b border-gray-200">
                   <div className="p-1 text-xs text-center bg-gray-50 border-r font-mono">
                     {(hour + 8).toString().padStart(2, '0')}:00
@@ -87,7 +83,6 @@ const TimeSlotGrid = ({
                   })}
                 </div>
 
-                {/* 30분 */}
                 <div className="grid grid-cols-8 border-b border-gray-100">
                   <div className="p-1 text-xs text-center bg-gray-50 border-r font-mono text-gray-400">
                     {(hour + 8).toString().padStart(2, '0')}:30

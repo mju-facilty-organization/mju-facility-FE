@@ -20,6 +20,7 @@ import AdminFacilities from '@/pages/admin/AdminFacilities';
 import AdminFacilityCreate from '@/pages/admin/AdminFacilityCreate';
 import ApprovalPage from '@/pages/approval/index';
 import AdminRegularSchedule from '@/pages/admin/AdminRegularSchedule';
+import AdminFacilitySchedule from '@/pages/admin/AdminFacilitySchedule.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -108,6 +109,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute role="ADMIN">
             <AdminFacilityCreate />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: '/admin/schedules',
+        element: (
+          <PrivateRoute role="ADMIN">
+            <AdminFacilitySchedule />
           </PrivateRoute>
         ),
       },

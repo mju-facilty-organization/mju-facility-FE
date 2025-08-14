@@ -200,6 +200,13 @@ const Sidebar = () => {
                 {expandedMenus.schedule && (
                   <div className="ml-6 mt-1 space-y-1">
                     <Link
+                      to="/admin/schedules"
+                      className="flex items-center px-6 py-3 text-gray-custom text-lg rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+                    >
+                      <Calendar className="h-4 w-4 mr-3" />
+                      시설 스케줄
+                    </Link>
+                    <Link
                       to="/admin/schedules/regular"
                       className="flex items-center px-6 py-3 text-gray-custom text-lg rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
                     >
