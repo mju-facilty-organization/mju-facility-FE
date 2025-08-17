@@ -112,7 +112,7 @@ const AdminRegularSchedule = () => {
   ]);
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
+    <div className="max-w-7xl mx-auto p-6  min-h-screen">
       <div className="bg-myongji text-white p-6 rounded-lg mb-6">
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <Calendar className="w-8 h-8" />
