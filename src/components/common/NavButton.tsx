@@ -13,7 +13,7 @@ const NavButton = ({
   to,
   className = '',
 }: NavButtonProps) => {
-  const baseStyle = 'text-[#656565] text-2xl hover:underline transition-colors';
+  const baseStyle = 'text-white text-xl hover:underline transition-colors';
 
   if (to) {
     return (

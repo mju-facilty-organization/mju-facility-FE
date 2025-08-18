@@ -9,23 +9,23 @@ const Header = () => {
   const { user } = useAuthStore();
   const { toggle } = useSidebarStore();
   return (
-    <>
-      <div className="w-full h-32 bg-myongji">
-        <Link to="/" className="h-full flex items-center ml-6">
-          <img className="h-16" src={logo} alt="명지대학교" />
-        </Link>
-      </div>
-      <div className="w-full h-14 flex items-center bg-white px-6">
+    <div className="w-full h-28 bg-myongji flex items-center justify-between px-2">
+      <div className="flex items-center gap-4">
         {(user?.role === 'STUDENT' || !user) && (
-          <button onClick={toggle} className="p-2 rounded-lg hover:bg-gray-100">
-            <Menu size={24} className="text-gray-custom" />
+          <button
+            onClick={toggle}
+            className="p-2 rounded-lg hover:bg-blue-700/20"
+          >
+            <Menu size={26} className="text-white" />
           </button>
         )}
-        <div className="ml-auto">
-          <AuthButtons />
-        </div>
+        <Link to="/" className="flex items-center">
+          <img className="h-12" src={logo} alt="명지대학교" />
+        </Link>
       </div>
-    </>
+      <AuthButtons />
+    </div>
   );
 };
+
 export default Header;

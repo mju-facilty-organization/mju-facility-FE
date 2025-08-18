@@ -37,9 +37,9 @@ const AuthButtons = () => {
       {isLoggedIn ? (
         <div className="flex items-center gap-4">
           {isLoading ? (
-            <span className="text-gray-custom text-2xl">로딩 중...</span>
+            <span className="text-white text-xl">로딩 중...</span>
           ) : (
-            <span className="text-gray-custom text-2xl">
+            <span className="text-white text-xl">
               {memberData?.data?.name || user?.name || ''}님
             </span>
           )}
@@ -48,7 +48,7 @@ const AuthButtons = () => {
       ) : (
         <div className="flex items-center gap-4">
           <NavButton to="/login">로그인</NavButton>
-          <span className="text-gray-custom text-2xl ">|</span>
+          <span className="text-white text-xl ">|</span>
           <NavButton to="/privacy-agreement">회원가입</NavButton>
         </div>
       )}
