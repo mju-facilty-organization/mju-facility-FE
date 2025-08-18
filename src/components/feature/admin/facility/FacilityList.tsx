@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { DEPARTMENT_ENGLISH_TO_KOREAN } from '@/constants/department';
 import { FACILITY_TYPE_MAP } from '@/constants/building';
@@ -8,6 +9,7 @@ import { Facility } from '@/types/facility';
 
 const FacilityList = () => {
   const [page, setPage] = useState(0);
+  const navigate = useNavigate();
 
   const { data, isLoading, isError } = useFacilities(page);
 
@@ -17,6 +19,10 @@ const FacilityList = () => {
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
+  };
+
+  const handleViewInUseStudents = (facilityId: number) => {
+    navigate(`/admin/facilities/${facilityId}/in-use`);
   };
 
   const facilities = data?.data?.content || [];
@@ -38,10 +44,10 @@ const FacilityList = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-lg font-medium text-gray-500">
-                  시설 유형
+                  건물
                 </th>
                 <th className="px-6 py-3 text-left text-lg font-medium text-gray-500">
-                  시설 번호
+                  강의실
                 </th>
                 <th className="px-6 py-3 text-left text-lg font-medium text-gray-500">
                   수용 인원
@@ -51,6 +57,9 @@ const FacilityList = () => {
                 </th>
                 <th className="px-6 py-3 text-left text-lg font-medium text-gray-500">
                   지원 시설
+                </th>
+                <th className="px-6 py-3 text-left text-lg font-medium text-gray-500">
+                  현재 이용 현황
                 </th>
               </tr>
             </thead>
@@ -77,6 +86,14 @@ const FacilityList = () => {
                   </td>
                   <td className="px-6 py-4 text-lg text-gray-custom">
                     {facility.supportFacilities.join(', ')}
+                  </td>
+                  <td className="px-6 py-4 text-lg">
+                    <button
+                      onClick={() => handleViewInUseStudents(facility.id)}
+                      className="bg-myongji text-white px-3 py-1 rounded hover:bg-blue-800 text-base"
+                    >
+                      이용현황
+                    </button>
                   </td>
                 </tr>
               ))}

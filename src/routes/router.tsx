@@ -18,6 +18,7 @@ import SuggestionFormPage from '@/pages/suggestion/suggestionForm';
 import AdminReservations from '@/pages/admin/AdminReservations';
 import AdminFacilities from '@/pages/admin/AdminFacilities';
 import AdminFacilityCreate from '@/pages/admin/AdminFacilityCreate';
+import FacilityInUsePage from '@/pages/admin/AdminFacilityInuse';
 import ApprovalPage from '@/pages/approval/index';
 import AdminRegularSchedule from '@/pages/admin/AdminRegularSchedule';
 import AdminFacilitySchedule from '@/pages/admin/AdminFacilitySchedule.tsx';
@@ -43,7 +44,6 @@ export const router = createBrowserRouter([
         path: '/privacy-agreement',
         element: <PrivacyAgreement />,
       },
-
       {
         path: '/signup',
         element: <Signup />,
@@ -109,6 +109,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute role="ADMIN">
             <AdminFacilityCreate />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: '/admin/facilities/:facilityId/in-use',
+        element: (
+          <PrivateRoute role="ADMIN">
+            <FacilityInUsePage />
           </PrivateRoute>
         ),
       },

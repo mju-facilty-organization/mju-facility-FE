@@ -30,3 +30,8 @@ export async function getStudentReservations(studentId: string) {
   const response = await api.get(`/rental/students/${studentId}`);
   return response.data;
 }
+
+export async function getFacilityInUse(facilityId: number) {
+  const response = await api.get(`/rental/facilities/${facilityId}/in-use`);
+  return response.data;
+}
