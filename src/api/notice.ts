@@ -16,5 +16,15 @@ export async function createNotice(noticeData: {
   imageName?: string;
 }) {
   const response = await api.post('/notices', noticeData);
-  return response.data;
+  return response;
+}
+
+export async function uploadFileToPresignedUrl(url: string, file: File) {
+  return fetch(url, {
+    method: 'PUT',
+    body: file,
+    headers: {
+      'Content-Type': file.type,
+    },
+  });
 }
