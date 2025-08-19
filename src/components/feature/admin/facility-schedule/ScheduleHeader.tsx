@@ -23,16 +23,19 @@ const ScheduleHeader = ({
   selectedFacility,
 }: ScheduleHeaderProps) => {
   return (
-    <div className="bg-myongji rounded-lg">
-      <div className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between gap-6">
+    <div className="rounded-lg">
+      <div className="max-w-7xl  px-6 py-4">
+        <div className="flex items-center  gap-6">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-white">시설 스케줄</h1>
+            <h1 className="text-2xl font-bold text-myongji">시설 스케줄</h1>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-blue-600" />
+              <MapPin className="w-4 h-4 text-myongji" />
+              <span className="text-lg font-semibold text-myongji">
+                시설 선택
+              </span>
               <select
                 value={selectedFacilityId || ''}
                 onChange={(e) => onFacilityChange(Number(e.target.value))}
@@ -62,8 +65,8 @@ const ScheduleHeader = ({
           {selectedFacility && (
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-white" />
-                <span className="font-bold text-lg text-white">
+                <Building2 className="w-4 h-4 text-myongji" />
+                <span className="font-bold text-lg text-myongji">
                   {selectedFacility.facilityNumber}
                 </span>
                 {selectedFacility.facilityType && (
@@ -72,7 +75,7 @@ const ScheduleHeader = ({
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-1 text-white">
+              <div className="flex items-center gap-1 text-myongji">
                 <Clock className="w-4 h-4" />
                 <span className="text-base font-medium">08:00-22:00</span>
               </div>
@@ -83,9 +86,9 @@ const ScheduleHeader = ({
         </div>
 
         {error && (
-          <div className="mt-3 p-3 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200/50 rounded-lg shadow-sm">
+          <div className="mt-3 p-3 ">
             <div className="flex items-center">
-              <div className="p-1 bg-red-100 rounded-full mr-2">
+              <div className="p-1 rounded-full mr-2">
                 <AlertCircle className="w-4 h-4 text-red-600" />
               </div>
               <span className="text-sm text-red-800 font-medium">{error}</span>

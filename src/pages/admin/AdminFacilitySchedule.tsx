@@ -58,7 +58,7 @@ const AdminFacilitySchedule = () => {
         selectedFacility={selectedFacility}
       />
 
-      <div className="max-w-7xl mx-auto px-6 py-4">
+      <div className="max-w-8xl mx-auto px-6 py-4">
         {!selectedFacilityId ? (
           <NoSelectionState />
         ) : loading ? (
