@@ -13,6 +13,7 @@ import {
   ChevronDown,
   ChevronRight,
   FileText,
+  Clock,
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -213,6 +214,13 @@ const Sidebar = () => {
                     >
                       <Calendar className="h-4 w-4 mr-3" />
                       정기 스케줄 생성
+                    </Link>
+                    <Link
+                      to="/admin/schedules/uploadExcel"
+                      className="flex items-center px-6 py-3 text-gray-custom text-lg rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+                    >
+                      <Clock className="h-4 w-4 mr-3" />
+                      시간표 등록
                     </Link>
                   </div>
                 )}

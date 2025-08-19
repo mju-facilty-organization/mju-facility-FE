@@ -26,6 +26,8 @@ import AdminFacilitySchedule from '@/pages/admin/AdminFacilitySchedule.tsx';
 
 import CreateNoticePage from '@/pages/admin/AdminNotice';
 import NoticeDetailPage from '@/pages/notice/NoticeDetail';
+
+import TimetableUpload from '@/pages/admin/AdminScheduleUpload';
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -136,6 +138,7 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+
       {
         path: '/admin/schedules',
         element: (
@@ -149,6 +152,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute role="ADMIN">
             <AdminRegularSchedule />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: '/admin/schedules/uploadExcel',
+        element: (
+          <PrivateRoute role="ADMIN">
+            <TimetableUpload />
           </PrivateRoute>
         ),
       },
