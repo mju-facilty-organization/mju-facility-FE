@@ -38,7 +38,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="min-h-screen w-80 bg-white border-r border-gray-200 rounded-r-xl shadow-sm">
+    <div className="h-full w-80 bg-white border-r border-gray-200 rounded-r-xl shadow-sm flex flex-col">
       <div className="flex justify-between items-center px-6 py-8">
         <h1 className="text-2xl font-bold text-myongji">MJU Space</h1>
         {!isAdmin && (
@@ -68,7 +68,7 @@ const Sidebar = () => {
           </div>
         </div>
       )}
-      <nav className="px-4 pt-4">
+      <nav className="px-4 pt-4 flex-1">
         <div className="space-y-2">
           {!user && (
             <>
