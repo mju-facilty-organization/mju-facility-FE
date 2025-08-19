@@ -3,9 +3,15 @@ import { getScheduleView } from '@/api/facilityschedule';
 import { getWeekDates } from '@/utils/schedule';
 import { ReservationState } from '@/types/reservationState';
 
+type BookInfo = {
+  bookName: string;
+  type: string;
+};
+
 type ScheduleDay = {
   date: string;
   timeTable: Record<string, ReservationState>;
+  bookInfoTable: Record<string, BookInfo>;
 };
 
 type UseScheduleDataProps = {

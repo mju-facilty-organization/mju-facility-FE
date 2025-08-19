@@ -1,6 +1,11 @@
 import { ReservationState } from '@/types/reservationState';
 import { FACILITY_TYPE_MAP } from '@/constants/building';
 
+export type BookInfo = {
+  bookName: string;
+  type: string;
+};
+
 export const generateTimeSlots = () => {
   const slots = [];
   for (let hour = 8; hour < 22; hour++) {
@@ -68,6 +73,16 @@ export const getStatusFromTimeTable = (
   }
 
   return timeTable[time] as ReservationState;
+};
+
+export const getBookInfoFromTable = (
+  bookInfoTable: Record<string, BookInfo> | null | undefined,
+  time: string
+): BookInfo | null => {
+  if (!bookInfoTable || !bookInfoTable[time]) {
+    return null;
+  }
+  return bookInfoTable[time];
 };
 
 export const getStatusHoverClass = (status: ReservationState) => {

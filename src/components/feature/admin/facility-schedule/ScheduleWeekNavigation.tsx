@@ -19,7 +19,7 @@ const ScheduleWeekNavigation = ({
   return (
     <div className="mb-4 flex items-center relative">
       <div className="text-left">
-        <div className="text-2xl font-bold text-slate-800">
+        <div className="text-2xl font-bold text-myongji">
           {weekInfo.year}년 {weekInfo.dateRange}
         </div>
       </div>

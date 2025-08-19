@@ -4,11 +4,14 @@ import {
   formatTimeLabel,
   getStatusFromTimeTable,
   getStatusHoverClass,
+  getBookInfoFromTable,
+  BookInfo,
 } from '@/utils/schedule';
 
 type ScheduleDay = {
   date: string;
   timeTable: Record<string, ReservationState>;
+  bookInfoTable: Record<string, BookInfo>;
 };
 
 type ScheduleTableProps = {
@@ -18,12 +21,12 @@ type ScheduleTableProps = {
 
 const ScheduleTable = ({ scheduleData, timeSlots }: ScheduleTableProps) => {
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/20">
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
       <div className="overflow-auto">
-        <table className="w-full">
-          <thead className="sticky top-0 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 text-white z-10 shadow-lg">
+        <table className="w-full table-fixed">
+          <thead className="sticky top-0 bg-gradient-to-r from-myongji to-blue-900 text-white z-10">
             <tr>
-              <th className="px-4 py-4 text-left text-sm font-semibold w-20 border-r border-slate-500/30">
+              <th className="w-16 px-3 py-3 text-center text-xs font-medium border-r border-myongji/30">
                 시간
               </th>
               {scheduleData.map((day) => {
@@ -34,15 +37,15 @@ const ScheduleTable = ({ scheduleData, timeSlots }: ScheduleTableProps) => {
                 return (
                   <th
                     key={day.date}
-                    className={`px-2 py-4 text-center text-sm font-semibold border-r border-slate-500/30 last:border-r-0 ${
-                      isToday ? 'bg-blue-600' : ''
+                    className={`px-2 py-3 text-center text-xs font-medium border-r border-myongji/30 last:border-r-0 ${
+                      isToday ? 'bg-myongji/80' : ''
                     }`}
                   >
-                    <div className="space-y-1">
-                      <div className="text-base font-bold">
-                        {month}/{dayNum}
+                    <div className="flex items-center justify-center space-x-1">
+                      <div className="text-base font-bold">{dayOfWeek}</div>
+                      <div className="text-sm">
+                        ({month}/{dayNum})
                       </div>
-                      <div className="text-xs opacity-90">{dayOfWeek}</div>
                     </div>
                   </th>
                 );
@@ -57,42 +60,60 @@ const ScheduleTable = ({ scheduleData, timeSlots }: ScheduleTableProps) => {
                   key={time}
                   className={`${
                     isHourStart
-                      ? 'border-t-2 border-slate-200'
-                      : 'border-t border-slate-100'
-                  } hover:bg-slate-50/50 transition-colors duration-150`}
+                      ? 'border-t border-gray-300'
+                      : 'border-t border-gray-100'
+                  } hover:bg-gray-50/50 transition-colors duration-150`}
                 >
-                  <td className="px-4 py-2 text-sm font-medium text-slate-700 bg-gradient-to-r from-slate-50 to-gray-50 border-r border-slate-200">
-                    <div className="text-right">
-                      {formatTimeLabel(time) ? (
-                        <div className="font-bold text-slate-800">
-                          {formatTimeLabel(time)}
-                        </div>
-                      ) : (
-                        <div className="text-xs text-slate-500">{time}</div>
-                      )}
-                    </div>
+                  <td className="px-2 py-1 text-xs text-gray-600 bg-slate-50/50 border-r border-gray-200 text-center">
+                    {formatTimeLabel(time) ? (
+                      <div className="font-semibold text-slate-700">
+                        {formatTimeLabel(time)}
+                      </div>
+                    ) : (
+                      <div className="text-xs text-gray-500">{time}</div>
+                    )}
                   </td>
                   {scheduleData.map((day) => {
                     const status = getStatusFromTimeTable(day.timeTable, time);
+                    const bookInfo = getBookInfoFromTable(
+                      day.bookInfoTable,
+                      time
+                    );
                     const statusConfig = RESERVATION_STATES[status];
+
+                    const hasBookInfo =
+                      bookInfo && bookInfo.bookName !== '없음';
+
                     return (
                       <td
                         key={`${day.date}-${time}`}
-                        className="p-1 border-r border-slate-100 last:border-r-0"
+                        className="p-0.5 border-r border-gray-100 last:border-r-0"
                       >
                         <div
-                          className={`h-6 w-full rounded-md transition-all duration-200 shadow-sm border border-white/30 ${getStatusHoverClass(
+                          className={`relative h-8 w-full rounded transition-all duration-200 overflow-hidden ${getStatusHoverClass(
                             status
                           )} ${
                             status === 'AVAILABLE'
-                              ? 'hover:scale-105 hover:shadow-md'
-                              : ''
+                              ? 'hover:shadow-sm border border-myongji/20 hover:bg-myongji/5'
+                              : 'border border-transparent'
                           }`}
                           style={{
                             backgroundColor: statusConfig.color,
                           }}
-                          title={`${day.date} ${time} - ${statusConfig.label}`}
-                        />
+                        >
+                          {hasBookInfo && (
+                            <div className="absolute inset-0 flex items-center justify-center px-1">
+                              <div className="text-center">
+                                <span className="text-xs font-medium text-white leading-tight truncate">
+                                  {bookInfo.bookName}{' '}
+                                </span>
+                                <span className="text-xs font-bold opacity-80 text-black">
+                                  {bookInfo.type}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </td>
                     );
                   })}
