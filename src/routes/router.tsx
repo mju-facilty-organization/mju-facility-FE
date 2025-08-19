@@ -23,6 +23,8 @@ import ApprovalPage from '@/pages/approval/index';
 import AdminRegularSchedule from '@/pages/admin/AdminRegularSchedule';
 import AdminFacilitySchedule from '@/pages/admin/AdminFacilitySchedule.tsx';
 
+import CreateNoticePage from '@/pages/admin/AdminNotice';
+import NoticeDetailPage from '@/pages/notice/NoticeDetail';
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -47,6 +49,11 @@ export const router = createBrowserRouter([
       {
         path: '/signup',
         element: <Signup />,
+      },
+
+      {
+        path: '/notice/:noticeId',
+        element: <NoticeDetailPage />,
       },
       // Student routes
       {
@@ -133,6 +140,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute role="ADMIN">
             <AdminRegularSchedule />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: '/admin/notice',
+        element: (
+          <PrivateRoute role="ADMIN">
+            <CreateNoticePage />
           </PrivateRoute>
         ),
       },

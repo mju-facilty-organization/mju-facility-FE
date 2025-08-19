@@ -12,6 +12,7 @@ import {
   X,
   ChevronDown,
   ChevronRight,
+  FileText,
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -216,6 +217,14 @@ const Sidebar = () => {
                   </div>
                 )}
               </div>
+
+              <Link
+                to="/admin/notice"
+                className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
+              >
+                <FileText className="h-5 w-5 mr-3" />
+                공지사항
+              </Link>
 
               <Link
                 to="/suggestions"
