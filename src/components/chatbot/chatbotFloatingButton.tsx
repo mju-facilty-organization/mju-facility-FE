@@ -1,26 +1,30 @@
-import { useState } from 'react';
 import {
   MessageCircle,
   X,
   MessageSquare,
   Maximize2,
   Minimize2,
+  Send,
 } from 'lucide-react';
+import { CATEGORIES } from '@/constants/chatbot';
+import { useChatbot } from '@/hooks/useChatbot';
 
 const ChatbotFloatingButton = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const toggleChat = () => {
-    setIsOpen(!isOpen);
-    if (!isOpen) {
-      setIsExpanded(false);
-    }
-  };
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
+  const {
+    isOpen,
+    isExpanded,
+    messages,
+    inputValue,
+    isLoading,
+    selectedCategory,
+    toggleChat,
+    toggleExpand,
+    selectCategory,
+    resetCategory,
+    sendMessage,
+    handleKeyPress,
+    setInputValue,
+  } = useChatbot();
 
   return (
     <>
@@ -122,26 +126,115 @@ const ChatbotFloatingButton = () => {
               </div>
             </div>
 
-            <div className="flex-1 p-4 bg-slate-50 flex items-center justify-center">
-              <div className="text-center text-slate-600">
-                <MessageCircle className="w-12 h-12 mx-auto mb-2 text-slate-400" />
-                <p className="text-sm">안녕하세요! 👋</p>
-                <p className="text-sm">시설 예약을 도와드릴게요</p>
-                {isExpanded && (
-                  <p className="text-xs text-slate-400 mt-2">전체화면 모드</p>
+            <div className="flex-1 p-4 bg-slate-50 overflow-y-auto">
+              <div className="space-y-4">
+                {messages.map((message) => (
+                  <div key={message.id}>
+                    <div
+                      className={`flex ${
+                        message.isBot ? 'justify-start' : 'justify-end'
+                      }`}
+                    >
+                      <div
+                        className={`max-w-[80%] px-4 py-2 rounded-lg ${
+                          message.isBot
+                            ? 'bg-white text-slate-800 border border-slate-200'
+                            : message.isCategory
+                            ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                            : 'bg-myongji text-white'
+                        }`}
+                      >
+                        <p className="text-sm whitespace-pre-wrap">
+                          {message.text}
+                        </p>
+                      </div>
+                    </div>
+                    {message.showCategories && (
+                      <div className="mt-3 grid grid-cols-1 gap-2">
+                        {CATEGORIES.map((category) => (
+                          <button
+                            key={category.key}
+                            onClick={() => selectCategory(category)}
+                            className="p-3 bg-white border border-slate-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors text-left"
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="text-xl">{category.icon}</span>
+                              <div>
+                                <div className="font-medium text-slate-800">
+                                  {category.name}
+                                </div>
+                                <div className="text-xs text-slate-500">
+                                  {category.description}
+                                </div>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-white text-slate-800 border border-slate-200 px-4 py-2 rounded-lg">
+                      <div className="flex items-center space-x-1">
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+                        <div
+                          className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                          style={{ animationDelay: '0.1s' }}
+                        ></div>
+                        <div
+                          className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                          style={{ animationDelay: '0.2s' }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
 
             <div className="p-4 border-t border-slate-200 bg-white">
+              {selectedCategory && (
+                <div className="mb-3 flex items-center justify-between bg-blue-50 p-2 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <span>{selectedCategory.icon}</span>
+                    <span className="text-sm font-medium text-blue-800">
+                      {selectedCategory.name}
+                    </span>
+                  </div>
+                  <button
+                    onClick={resetCategory}
+                    className="text-xs text-blue-600 hover:text-blue-800 underline"
+                  >
+                    변경
+                  </button>
+                </div>
+              )}
+
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="메시지를 입력하세요..."
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder={
+                    selectedCategory
+                      ? '메시지를 입력하세요...'
+                      : '먼저 문의 유형을 선택해주세요'
+                  }
                   className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-myongji focus:border-myongji text-sm"
+                  disabled={isLoading || !selectedCategory}
                 />
-                <button className="px-4 py-2 bg-myongji text-white rounded-lg hover:bg-blue-800 transition-colors text-sm font-medium">
-                  전송
+                <button
+                  onClick={sendMessage}
+                  disabled={
+                    !inputValue.trim() || isLoading || !selectedCategory
+                  }
+                  className="px-4 py-2 bg-myongji text-white rounded-lg hover:bg-blue-800 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  <Send className="w-4 h-4" />
+                  {isLoading ? '전송중...' : '전송'}
                 </button>
               </div>
             </div>
