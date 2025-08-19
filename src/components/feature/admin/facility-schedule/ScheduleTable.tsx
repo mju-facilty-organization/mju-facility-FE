@@ -104,10 +104,10 @@ const ScheduleTable = ({ scheduleData, timeSlots }: ScheduleTableProps) => {
                           {hasBookInfo && (
                             <div className="absolute inset-0 flex items-center justify-center px-1">
                               <div className="text-center">
-                                <span className="text-xs font-medium text-white leading-tight truncate">
+                                <span className="text-xs font-bold text-black leading-tight truncate">
                                   {bookInfo.bookName}{' '}
                                 </span>
-                                <span className="text-xs font-bold opacity-80 text-black">
+                                <span className="text-xs font-bold opacity-80 text-myongji">
                                   {bookInfo.type}
                                 </span>
                               </div>
