@@ -27,7 +27,7 @@ const ChatbotFloatingButton = () => {
       <button
         onClick={toggleChat}
         className={`
-          fixed bottom-6 right-6 w-14 h-14 
+          fixed bottom-10 right-10 w-16 h-16 
           ${
             isOpen
               ? 'bg-gray-600 hover:bg-gray-700'
@@ -87,8 +87,8 @@ const ChatbotFloatingButton = () => {
             transition-all duration-300 ease-in-out
             ${
               isExpanded
-                ? 'inset-4 md:inset-8 lg:inset-16'
-                : 'bottom-24 right-6 w-80 h-96'
+                ? 'top-8 left-1/2 transform -translate-x-1/2 w-1/3 max-w-4xl h-5/6 mx-4'
+                : 'bottom-28 right-6 w-1/4 h-1/2'
             }
           `}
           >
