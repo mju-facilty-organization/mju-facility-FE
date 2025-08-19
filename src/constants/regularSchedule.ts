@@ -1,5 +1,4 @@
 export const SCHEDULE_TYPES = [
-  { value: 'CLASS', label: '수업' },
   { value: 'CLUB', label: '동아리' },
   { value: 'SEMINAR', label: '세미나' },
   { value: 'MEETING', label: '회의' },
