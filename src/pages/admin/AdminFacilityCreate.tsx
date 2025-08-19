@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import FacilityCreation from '@/components/feature/admin/facility/FacilityCreation';
-import FacilityCSVUpload from '@/components/feature/admin/facility/FacilityCSVUpload';
+import FacilityExcelUpload from '@/components/feature/admin/facility/FacilityExcelUpload';
 
 const AdminFacilityCreate = () => {
   const [activeTab, setActiveTab] = useState<'single' | 'csv'>('single');
@@ -22,7 +22,6 @@ const AdminFacilityCreate = () => {
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6 text-myongji">시설 생성</h1>
 
-      {/* 탭 네비게이션 */}
       <div className="mb-6">
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8">
@@ -44,20 +43,19 @@ const AdminFacilityCreate = () => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              CSV 일괄 등록
+              Excel 일괄 등록
             </button>
           </nav>
         </div>
       </div>
 
-      {/* 탭 컨텐츠 */}
       {activeTab === 'single' ? (
         <FacilityCreation
           onCreated={handleFacilityCreated}
           onCancel={handleCancel}
         />
       ) : (
-        <FacilityCSVUpload
+        <FacilityExcelUpload
           onCreated={handleFacilityCreated}
           onCancel={handleCancel}
         />

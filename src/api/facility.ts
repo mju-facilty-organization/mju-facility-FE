@@ -44,3 +44,18 @@ export async function getFacilityDetail(
   const response = await api.get(url);
   return response.data;
 }
+
+export async function importFacilitiesFromExcel(
+  file: File,
+  dryRun: boolean = false,
+  overwrite: boolean = true
+) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await api.post('/admin/facilities/import', formData, {
+    params: { dryRun, overwrite },
+  });
+
+  return response.data;
+}
