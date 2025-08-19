@@ -59,3 +59,8 @@ export async function importFacilitiesFromExcel(
 
   return response.data;
 }
+
+export async function deleteFacility(facilityId: Facility['id']) {
+  const response = await api.delete(`/admin/facilities/${facilityId}`);
+  return response.data;
+}

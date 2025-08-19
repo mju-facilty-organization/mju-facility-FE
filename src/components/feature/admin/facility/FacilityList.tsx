@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { Edit2, Trash2 } from 'lucide-react';
 import { DEPARTMENT_ENGLISH_TO_KOREAN } from '@/constants/department';
 import { FACILITY_TYPE_MAP } from '@/constants/building';
 import Pagination from '@/components/common/Pagination';
-import { useFacilities } from '@/hooks/useFacility';
+import { useFacilities, useDeleteFacility } from '@/hooks/useFacility';
 import { Facility } from '@/types/facility';
 
 const FacilityList = () => {
   const [page, setPage] = useState(0);
   const navigate = useNavigate();
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
   const { data, isLoading, isError } = useFacilities(page);
+  const deleteFacilityMutation = useDeleteFacility();
 
   if (isError) {
     toast.error('시설 목록을 불러오는데 실패했습니다.');
@@ -23,6 +26,21 @@ const FacilityList = () => {
 
   const handleViewInUseStudents = (facilityId: number) => {
     navigate(`/admin/facilities/${facilityId}/in-use`);
+  };
+
+  const handleDeleteConfirm = (facilityId: number) => {
+    setDeleteConfirmId(facilityId);
+  };
+
+  const handleDelete = async () => {
+    if (deleteConfirmId) {
+      await deleteFacilityMutation.mutateAsync(deleteConfirmId);
+      setDeleteConfirmId(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmId(null);
   };
 
   const facilities = data?.data?.content || [];
@@ -61,6 +79,7 @@ const FacilityList = () => {
                 <th className="px-6 py-3 text-left text-lg font-medium text-gray-500">
                   현재 이용 현황
                 </th>
+                <th className="px-6 py-3 text-center text-lg font-medium text-gray-500 w-24"></th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -85,7 +104,9 @@ const FacilityList = () => {
                       .join(', ')}
                   </td>
                   <td className="px-6 py-4 text-lg text-gray-custom">
-                    {facility.supportFacilities.join(', ')}
+                    {facility.supportFacilities
+                      ? facility.supportFacilities.join(', ')
+                      : ''}
                   </td>
                   <td className="px-6 py-4 text-lg">
                     <button
@@ -94,6 +115,24 @@ const FacilityList = () => {
                     >
                       이용현황
                     </button>
+                  </td>
+                  <td className="px-6 py-4 text-lg">
+                    <div className="flex justify-center space-x-1">
+                      <button
+                        onClick={() => handleEdit(facility.id)}
+                        className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-full transition-colors duration-200"
+                        title="수정"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteConfirm(facility.id)}
+                        className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors duration-200"
+                        title="삭제"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -108,6 +147,37 @@ const FacilityList = () => {
             />
           )}
         </>
+      )}
+
+      {deleteConfirmId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              시설 삭제 확인
+            </h3>
+            <p className="text-gray-600 mb-6">
+              정말로 이 시설을 삭제하시겠습니까?
+              <br />
+              삭제된 시설은 복구할 수 없습니다.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={handleCancelDelete}
+                className="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300"
+                disabled={deleteFacilityMutation.isPending}
+              >
+                취소
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700 disabled:opacity-50"
+                disabled={deleteFacilityMutation.isPending}
+              >
+                {deleteFacilityMutation.isPending ? '삭제 중...' : '삭제'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

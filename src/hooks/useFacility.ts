@@ -1,9 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-hot-toast';
 import {
   createFacility,
   getFacilities,
   uploadFileToPresignedUrl,
   getFacilityDetail,
+  deleteFacility,
 } from '@/api/facility';
 import { Facility } from '@/types/facility';
 
@@ -59,6 +61,19 @@ export function useCreateFacility() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['facilities'] });
+      toast.success('시설이 성공적으로 등록되었습니다.');
+    },
+  });
+}
+
+export function useDeleteFacility() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteFacility,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['facilities'] });
+      toast.success('시설이 성공적으로 삭제되었습니다.');
     },
   });
 }
