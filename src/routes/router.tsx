@@ -18,6 +18,7 @@ import SuggestionFormPage from '@/pages/suggestion/suggestionForm';
 import AdminReservations from '@/pages/admin/AdminReservations';
 import AdminFacilities from '@/pages/admin/AdminFacilities';
 import AdminFacilityCreate from '@/pages/admin/AdminFacilityCreate';
+import AdminFacilityEdit from '@/components/feature/admin/facility/AdminFacilityEdit';
 import FacilityInUsePage from '@/pages/admin/AdminFacilityInuse';
 import ApprovalPage from '@/pages/approval/index';
 import AdminRegularSchedule from '@/pages/admin/AdminRegularSchedule';
@@ -116,6 +117,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute role="ADMIN">
             <AdminFacilityCreate />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: '/admin/facilities/:facilityId/edit',
+        element: (
+          <PrivateRoute role="ADMIN">
+            <AdminFacilityEdit />
           </PrivateRoute>
         ),
       },

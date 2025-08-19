@@ -6,6 +6,7 @@ import {
   uploadFileToPresignedUrl,
   getFacilityDetail,
   deleteFacility,
+  updateFacility,
 } from '@/api/facility';
 import { Facility } from '@/types/facility';
 
@@ -62,6 +63,49 @@ export function useCreateFacility() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['facilities'] });
       toast.success('시설이 성공적으로 등록되었습니다.');
+    },
+  });
+}
+
+export function useUpdateFacility() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      facilityId,
+      facilityData,
+      newFiles,
+    }: {
+      facilityId: Facility['id'];
+      facilityData: Facility;
+      newFiles?: File[];
+    }) => {
+      const response = await updateFacility(facilityId, facilityData);
+
+      if (
+        newFiles &&
+        newFiles.length > 0 &&
+        response.data?.presignedUrlList &&
+        response.data.presignedUrlList.length > 0
+      ) {
+        const uploadPromises = response.data.presignedUrlList.map(
+          (url: string, index: number) => {
+            return uploadFileToPresignedUrl(url, newFiles[index]);
+          }
+        );
+
+        await Promise.all(uploadPromises);
+      }
+
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['facilities'] });
+      queryClient.invalidateQueries({ queryKey: ['facility'] });
+      toast.success('시설이 성공적으로 수정되었습니다.');
+    },
+    onError: () => {
+      toast.error('시설 수정에 실패했습니다.');
     },
   });
 }

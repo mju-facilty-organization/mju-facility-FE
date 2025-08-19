@@ -64,3 +64,14 @@ export async function deleteFacility(facilityId: Facility['id']) {
   const response = await api.delete(`/admin/facilities/${facilityId}`);
   return response.data;
 }
+
+export async function updateFacility(
+  facilityId: Facility['id'],
+  facilityData: Facility
+) {
+  const response = await api.put(
+    `/admin/facilities/${facilityId}`,
+    facilityData
+  );
+  return response.data;
+}

@@ -13,6 +13,9 @@ const FacilityList = () => {
   const navigate = useNavigate();
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
+  const handleEdit = (facilityId: number) => {
+    navigate(`/admin/facilities/${facilityId}/edit`);
+  };
   const { data, isLoading, isError } = useFacilities(page);
   const deleteFacilityMutation = useDeleteFacility();
 

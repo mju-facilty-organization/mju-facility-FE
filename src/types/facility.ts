@@ -15,5 +15,5 @@ export type Facility = {
   college: string;
   startTime: string;
   endTime: string;
-  isAvailable: string;
+  isAvailable: boolean;
 };
