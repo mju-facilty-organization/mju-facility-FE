@@ -47,7 +47,7 @@ export default function Layout({ children, className = '' }: LayoutProps) {
         <Sidebar />
       </aside>
 
-      <main className="w-full">
+      <main className="min-h-screen w-full">
         <div className="container mx-auto px-4 py-8 max-w-6xl">{children}</div>
       </main>
     </div>
