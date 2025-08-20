@@ -1,7 +1,7 @@
 import { api } from '@/api';
-import { Reservation } from '@/types/reservation';
+import { ReservationInfo } from '@/types/reservation';
 
-export async function createReservation(reservationData: Reservation) {
+export async function createReservation(reservationData: ReservationInfo) {
   const response = await api.post('/rental', reservationData);
   return response.data;
 }
