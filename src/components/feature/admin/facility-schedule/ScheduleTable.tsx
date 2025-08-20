@@ -90,7 +90,7 @@ const ScheduleTable = ({ scheduleData, timeSlots }: ScheduleTableProps) => {
                         className="p-0.5 border-r border-gray-100 last:border-r-0"
                       >
                         <div
-                          className={`relative h-8 w-full rounded transition-all duration-200 overflow-hidden ${getStatusHoverClass(
+                          className={`relative h-12 w-full rounded transition-all duration-200 overflow-hidden ${getStatusHoverClass(
                             status
                           )} ${
                             status === 'AVAILABLE'
@@ -102,14 +102,14 @@ const ScheduleTable = ({ scheduleData, timeSlots }: ScheduleTableProps) => {
                           }}
                         >
                           {hasBookInfo && (
-                            <div className="absolute inset-0 flex items-center justify-center px-1">
+                            <div className="absolute inset-0 flex flex-col items-center justify-center px-1">
                               <div className="text-center">
-                                <span className="text-xs font-bold text-black leading-tight truncate">
-                                  {bookInfo.bookName}{' '}
-                                </span>
-                                <span className="text-xs font-bold opacity-80 text-myongji">
+                                <div className="text-xs font-bold opacity-80 text-myongji leading-tight">
                                   {bookInfo.type}
-                                </span>
+                                </div>
+                                <div className="text-xs font-bold text-black leading-tight truncate mt-0.5">
+                                  {bookInfo.bookName}
+                                </div>
                               </div>
                             </div>
                           )}
