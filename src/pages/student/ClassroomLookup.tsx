@@ -14,7 +14,8 @@ import Pagination from '@/components/common/Pagination';
 import { Facility } from '@/types/facility';
 import { School } from 'lucide-react';
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 1000;
+const DISPLAY_SIZE = 9;
 
 const KOREAN_TO_ENGLISH_DEPARTMENT: Record<string, string> = Object.entries(
   DEPARTMENT_ENGLISH_TO_KOREAN
@@ -28,19 +29,18 @@ const ClassroomLookup = () => {
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [selectedMajor, setSelectedMajor] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(0);
-
+  const [currentPage, setCurrentPage] = useState(0); // 클라이언트 페이지
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
+
   const navigate = useNavigate();
 
   const { data, isLoading, isError } = useFacilities(
-    currentPage,
+    0,
     PAGE_SIZE,
     selectedBuilding
   );
 
   const facilities = data?.data?.content || [];
-  const totalPages = data?.data?.totalPages || 0;
 
   const filteredFacilities = useMemo(() => {
     return facilities.filter((facility: Facility) => {
@@ -62,6 +62,13 @@ const ClassroomLookup = () => {
       return true;
     });
   }, [facilities, selectedDepartment, selectedMajor, searchQuery]);
+
+  const totalPages = Math.ceil(filteredFacilities.length / DISPLAY_SIZE);
+  const startIndex = currentPage * DISPLAY_SIZE;
+  const displayFacilities = filteredFacilities.slice(
+    startIndex,
+    startIndex + DISPLAY_SIZE
+  );
 
   useEffect(() => {
     setCurrentPage(0);
@@ -169,17 +176,25 @@ const ClassroomLookup = () => {
         />
       </div>
 
+      {!isLoading && filteredFacilities.length > 0 && (
+        <div className="mb-4 text-gray-600">
+          총 {filteredFacilities.length}개의 시설이 있습니다.
+        </div>
+      )}
+
       {isLoading ? (
         <div className="flex justify-center items-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-myongji"></div>
         </div>
-      ) : filteredFacilities.length === 0 ? (
+      ) : displayFacilities.length === 0 ? (
         <div className="col-span-3 text-center py-12 text-gray-500">
-          검색 결과가 없습니다.
+          {filteredFacilities.length === 0
+            ? '검색 결과가 없습니다.'
+            : '표시할 시설이 없습니다.'}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredFacilities.map((facility: Facility) => {
+          {displayFacilities.map((facility: Facility) => {
             const facilityId =
               facility.id?.toString() || facility.facilityNumber;
             const imageLoadFailed = failedImages[facilityId];
