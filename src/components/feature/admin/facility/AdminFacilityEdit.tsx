@@ -26,7 +26,6 @@ type FacilityEditFormData = {
   addFileNames: string[];
   removeKeys: string[];
   newOrder: string[];
-  hardDelete: boolean;
 };
 
 const FacilityEditForm = () => {
@@ -54,7 +53,6 @@ const FacilityEditForm = () => {
       addFileNames: [],
       removeKeys: [],
       newOrder: [],
-      hardDelete: false,
     },
   });
 
@@ -632,19 +630,6 @@ const FacilityEditForm = () => {
               </div>
             </div>
           )}
-        </div>
-
-        <div>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              {...register('hardDelete')}
-              className="form-checkbox h-5 w-5 text-myongji rounded focus:ring-myongji mr-2"
-            />
-            <span className="text-lg font-medium text-gray-700">
-              Hard Delete
-            </span>
-          </label>
         </div>
 
         <div className="flex justify-end mt-10">
