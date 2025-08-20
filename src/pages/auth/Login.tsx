@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import { useSignin } from '@/hooks/useSignin';
 import AuthLayout from '@/components/feature/auth/AuthLayout';
 import LoginTabs from '@/components/feature/auth/LoginTabs';
@@ -24,6 +23,7 @@ const Login = () => {
     signin({
       email: formData.email,
       password: formData.password,
+      expectedRole: activeTab,
     });
   };
 
@@ -41,9 +41,7 @@ const Login = () => {
       <form onSubmit={handleSubmit} className="space-y-12">
         {error && (
           <div className="text-red-500 text-sm">
-            {typeof error === 'string'
-              ? error
-              : '로그인 중 오류가 발생했습니다.'}
+            {error.message || '로그인 중 오류가 발생했습니다.'}
           </div>
         )}
 
