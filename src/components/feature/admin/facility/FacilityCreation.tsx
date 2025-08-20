@@ -242,7 +242,7 @@ const FacilityCreation: React.FC<FacilityCreationProps> = ({
             <input
               type="text"
               id="facilityNumber"
-              placeholder="예: 1350 (선택사항)"
+              placeholder="예: S1350 "
               {...register('facilityNumber')}
               className={`w-full px-4 py-3 text-lg border ${
                 errors.facilityNumber ? 'border-red-500' : 'border-gray-300'
