@@ -125,7 +125,7 @@ const Sidebar = () => {
                   className="w-full flex items-center justify-between px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-gray-50 transition-all duration-200 group"
                 >
                   <div className="flex items-center">
-                    <List className="h-5 w-5 mr-3 text-myongji" />
+                    <List className="h-5 w-5 mr-3 text-gray-500" />
                     <span className="font-medium">예약 관리</span>
                   </div>
                   {expandedMenus.reservation ? (
@@ -153,7 +153,7 @@ const Sidebar = () => {
                   className="w-full flex items-center justify-between px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-gray-50 transition-all duration-200 group"
                 >
                   <div className="flex items-center">
-                    <Building className="h-5 w-5 mr-3 text-myongji" />
+                    <Building className="h-5 w-5 mr-3 text-gray-500" />
                     <span className="font-medium">시설 관리</span>
                   </div>
                   {expandedMenus.facility ? (
@@ -188,7 +188,7 @@ const Sidebar = () => {
                   className="w-full flex items-center justify-between px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-gray-50 transition-all duration-200 group"
                 >
                   <div className="flex items-center">
-                    <Calendar className="h-5 w-5 mr-3 text-myongji" />
+                    <Calendar className="h-5 w-5 mr-3 text-gray-500" />
                     <span className="font-medium">스케줄 관리</span>
                   </div>
                   {expandedMenus.schedule ? (
@@ -228,7 +228,7 @@ const Sidebar = () => {
                 to="/admin/notice"
                 className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200 mt-4"
               >
-                <FileText className="h-5 w-5 mr-3 text-myongji" />
+                <FileText className="h-5 w-5 mr-3 text-gray-500" />
                 <span className="font-medium">공지사항</span>
               </Link>
 
@@ -236,7 +236,7 @@ const Sidebar = () => {
                 to="/suggestions"
                 className="flex items-center px-6 py-4 text-gray-custom text-xl rounded-lg hover:bg-myongji hover:text-white transition-all duration-200"
               >
-                <MessageSquare className="h-5 w-5 mr-3 text-myongji" />
+                <MessageSquare className="h-5 w-5 mr-3 text-gray-500" />
                 <span className="font-medium">건의함</span>
               </Link>
             </>
