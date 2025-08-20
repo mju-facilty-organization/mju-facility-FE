@@ -211,7 +211,7 @@ const ClassroomLookup = () => {
         </div>
       )}
 
-      {!isLoading && filteredFacilities.length > 0 && (
+      {!isLoading && totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
