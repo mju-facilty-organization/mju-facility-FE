@@ -19,13 +19,15 @@ export const ClassroomCard = ({
       <div className="p-4">
         <h3 className="text-2xl font-bold mb-2">{facility.facilityNumber}</h3>
         <div className="flex mb-1">
-          <span className="text-lg font-medium text-gray-custom">위치 : </span>
+          <span className="text-lg font-medium text-gray-custom whitespace-nowrap">
+            위치 :{' '}
+          </span>
           <span className="text-lg text-gray-custom ml-2">
             {FACILITY_TYPE_MAP[facility.facilityType] || facility.facilityType}
           </span>
         </div>
         <div className="flex mb-1">
-          <span className="text-lg font-medium text-gray-custom">
+          <span className="text-lg font-medium text-gray-custom whitespace-nowrap">
             수용인원 :{' '}
           </span>
           <span className="text-lg text-gray-custom ml-2">
@@ -33,7 +35,7 @@ export const ClassroomCard = ({
           </span>
         </div>
         <div className="flex mb-4">
-          <span className="text-lg font-medium text-gray-custom">
+          <span className="text-lg font-medium text-gray-custom whitespace-nowrap">
             구비시설 :{' '}
           </span>
           <span className="text-lg text-gray-custom ml-2">
