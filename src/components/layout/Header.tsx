@@ -20,7 +20,7 @@ const Header = () => {
           </button>
         )}
         <Link to="/" className="flex items-center">
-          <img className="h-12" src={logo} alt="명지대학교" />
+          <img className="h-9 sm:h-12" src={logo} alt="명지대학교" />
         </Link>
       </div>
       <AuthButtons />

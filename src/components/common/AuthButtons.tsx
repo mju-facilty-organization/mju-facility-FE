@@ -33,22 +33,24 @@ const AuthButtons = () => {
   };
 
   return (
-    <div className="mr-6">
+    <div className="mr-2 sm:mr-4 md:mr-6">
       {isLoggedIn ? (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
           {isLoading ? (
-            <span className="text-white text-xl">로딩 중...</span>
+            <span className="text-white text-sm sm:text-base md:text-xl">
+              로딩 중...
+            </span>
           ) : (
-            <span className="text-white text-xl">
+            <span className="text-white text-sm sm:text-base md:text-xl">
               {memberData?.data?.name || user?.name || ''}님
             </span>
           )}
           <NavButton onClick={handleLogout}>로그아웃</NavButton>
         </div>
       ) : (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
           <NavButton to="/login">로그인</NavButton>
-          <span className="text-white text-xl ">|</span>
+          <span className="text-white text-sm sm:text-base md:text-xl">|</span>
           <NavButton to="/privacy-agreement">회원가입</NavButton>
         </div>
       )}
