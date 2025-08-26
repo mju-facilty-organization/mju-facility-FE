@@ -8,7 +8,7 @@ const TabButton = ({ isActive, onClick, children }: TabButtonProps) => {
   return (
     <button
       onClick={onClick}
-      className={`flex-1 pb-4 text-[22px] font-medium border-b-2 transition-colors
+      className={`flex-1 pb-4 text-lg sm:text-[22px] font-medium border-b-2 transition-colors
           ${
             isActive
               ? 'border-myongji text-myongji'

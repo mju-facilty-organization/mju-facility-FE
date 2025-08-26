@@ -38,14 +38,17 @@ const Login = () => {
   return (
     <AuthLayout title="로그인">
       <LoginTabs activeTab={activeTab} onTabChange={setActiveTab} />
-      <form onSubmit={handleSubmit} className="space-y-12">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 sm:space-y-8 md:space-y-12"
+      >
         {error && (
           <div className="text-red-500 text-sm">
             {error.message || '로그인 중 오류가 발생했습니다.'}
           </div>
         )}
 
-        <div className="space-y-8">
+        <div className="space-y-4 sm:space-y-6 md:space-y-8">
           <Input
             type="email"
             name="email"
@@ -64,7 +67,7 @@ const Login = () => {
           />
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
           <div className="flex items-center">
             <input
               id="remember-me"
@@ -73,7 +76,7 @@ const Login = () => {
             />
             <label
               htmlFor="remember-me"
-              className="ml-2 text-lg text-gray-custom"
+              className="ml-2 text-sm sm:text-base md:text-lg text-gray-custom"
             >
               로그인 상태 유지
             </label>
@@ -81,22 +84,24 @@ const Login = () => {
           <button
             type="button"
             onClick={() => navigate('/verify')}
-            className="text-lg text-gray-custom hover:text-gray-800"
+            className="text-sm sm:text-base md:text-lg text-gray-custom hover:text-gray-800 text-left sm:text-right"
           >
             비밀번호 찾기
           </button>
         </div>
 
-        <Button variant="primary" type="submit" disabled={isPending}>
-          {isPending ? '로그인 중...' : '로그인'}
-        </Button>
+        <div className="space-y-3 sm:space-y-4">
+          <Button variant="primary" type="submit" disabled={isPending}>
+            {isPending ? '로그인 중...' : '로그인'}
+          </Button>
 
-        <Button
-          variant="secondary"
-          onClick={() => navigate('/privacy-agreement')}
-        >
-          회원가입
-        </Button>
+          <Button
+            variant="secondary"
+            onClick={() => navigate('/privacy-agreement')}
+          >
+            회원가입
+          </Button>
+        </div>
       </form>
     </AuthLayout>
   );
