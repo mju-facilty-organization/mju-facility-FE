@@ -33,22 +33,22 @@ const Guide = () => {
   ];
 
   return (
-    <div className="w-full max-w-[1000px] h-[500px] bg-white rounded-[50px] border-8 border-myongji p-10 overflow-x-hidden mx-auto mt-20">
+    <div className="w-full max-w-[1000px] h-[500px] bg-white rounded-[50px] border-8 border-myongji p-6 sm:p-10 overflow-x-hidden mx-auto mt-20">
       <PageTitle>온라인 공간 예약 시스템 이용안내</PageTitle>
 
-      <div className="space-y-10 max-w-7xl mx-auto mt-4">
+      <div className="space-y-6 sm:space-y-10 max-w-7xl mx-auto mt-4">
         <ReservationProcess title="공간 예약 절차" steps={normalSteps} />
 
         <div>
-          <h2 className="text-2xl font-semibold mb-4">유의사항</h2>
-          <p className="text-2xl text-gray-custom">
+          <h2 className="text-lg sm:text-2xl font-semibold mb-4">유의사항</h2>
+          <p className="text-lg sm:text-2xl text-gray-custom">
             (**기존 명지대학교 대여 내규를 따름.)
           </p>
         </div>
 
-        <div className="flex justify-center mt-10">
+        <div className="flex justify-center mt-6 sm:mt-10">
           <button
-            className="bg-myongji text-white px-10 py-4 rounded-lg text-xl hover:bg-opacity-90 transition-colors"
+            className="bg-myongji text-white px-6 sm:px-10 py-3 sm:py-4 rounded-lg text-base sm:text-xl hover:bg-opacity-90 transition-colors"
             onClick={() => {
               navigate('/reservation');
             }}

@@ -3,7 +3,9 @@ interface PageTitleProps {
 }
 
 const PageTitle = ({ children }: PageTitleProps) => {
-  return <h1 className="text-center text-4xl font-black">{children}</h1>;
+  return (
+    <h1 className="text-center text-2xl sm:text-4xl font-black">{children}</h1>
+  );
 };
 
 export default PageTitle;
