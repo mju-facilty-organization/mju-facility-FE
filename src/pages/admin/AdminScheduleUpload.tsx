@@ -159,13 +159,13 @@ const TimetableUpload = () => {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center">
             <Calendar className="mr-2 h-5 w-5 text-purple-600" />
-            업로드 설정
+            시간표 적용 기간 설정
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                유효 시작일 (선택사항)
+                시작일 (선택사항)
               </label>
               <input
                 type="date"
@@ -182,7 +182,7 @@ const TimetableUpload = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                유효 종료일 (선택사항)
+                종료일 (선택사항)
               </label>
               <input
                 type="date"
@@ -198,25 +198,35 @@ const TimetableUpload = () => {
             </div>
           </div>
 
-          <div className="mt-6">
-            <label className="flex items-center space-x-3">
-              <input
-                type="checkbox"
-                checked={overwrite}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setOverwrite(e.target.checked)
-                }
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <span className="text-sm font-medium text-gray-700">
-                기존 데이터 덮어쓰기
-              </span>
-            </label>
-            <p className="text-xs text-gray-500 mt-1">
-              {overwrite
-                ? '기존 스케줄 데이터를 삭제하고 새로 등록합니다.'
-                : '기존 스케줄과 겹치는 경우 처리하지 않습니다.'}
-            </p>
+          <div className="mt-6 flex justify-between items-start">
+            <div>
+              <label className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  checked={overwrite}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setOverwrite(e.target.checked)
+                  }
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  기존 데이터 덮어쓰기
+                </span>
+              </label>
+              <p className="text-xs text-gray-500 mt-1 ml-7">
+                {overwrite
+                  ? '기존 스케줄 데이터를 삭제하고 새로 등록합니다.'
+                  : '기존 스케줄과 겹치는 경우 처리하지 않습니다.'}
+              </p>
+            </div>
+
+            <button
+              onClick={handleReset}
+              className="flex items-center px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              초기화
+            </button>
           </div>
         </div>
 
@@ -250,15 +260,7 @@ const TimetableUpload = () => {
           </div>
         )}
 
-        <div className="flex justify-between">
-          <button
-            onClick={handleReset}
-            className="flex items-center px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <RotateCcw className="h-4 w-4 mr-2" />
-            초기화
-          </button>
-
+        <div className="flex justify-end">
           <button
             onClick={handleUpload}
             disabled={!file || isUploading}
