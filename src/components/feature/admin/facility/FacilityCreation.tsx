@@ -5,11 +5,7 @@ import { BUILDINGS } from '@/constants/building';
 import { DEPARTMENTS, College, Department } from '@/constants/department';
 import { useCreateFacility } from '@/hooks/useFacility';
 import { Facility } from '@/types/facility';
-
-type FacilityCreationProps = {
-  onCreated?: () => void;
-  onCancel?: () => void;
-};
+import TimeSelect from '@/components/common/TimeSelect';
 
 type FacilityFormData = Omit<
   Facility,
@@ -20,10 +16,7 @@ type FacilityFormData = Omit<
   allowedBoundary: Department[];
 };
 
-const FacilityCreation: React.FC<FacilityCreationProps> = ({
-  onCreated,
-  onCancel,
-}) => {
+const FacilityCreation = ({ onCreated, onCancel }) => {
   const {
     register,
     handleSubmit,
@@ -34,6 +27,10 @@ const FacilityCreation: React.FC<FacilityCreationProps> = ({
     reset,
   } = useForm<FacilityFormData>({
     mode: 'onChange',
+    defaultValues: {
+      startTime: '09:00',
+      endTime: '17:00',
+    },
   });
 
   const createFacilityMutation = useCreateFacility();
@@ -161,7 +158,10 @@ const FacilityCreation: React.FC<FacilityCreationProps> = ({
   };
 
   const resetForm = () => {
-    reset({});
+    reset({
+      startTime: '09:00',
+      endTime: '17:00',
+    });
 
     filePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
     setFiles([]);
@@ -288,57 +288,49 @@ const FacilityCreation: React.FC<FacilityCreationProps> = ({
             )}
           </div>
 
-          <div>
-            <label
-              htmlFor="startTime"
-              className="block text-lg font-medium text-gray-700 mb-2"
-            >
-              시작 시간 <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="time"
-              id="startTime"
-              defaultValue="11:00"
-              {...register('startTime', {
-                required: '시작 시간을 설정해주세요.',
-                validate: validateTimeRange,
-              })}
-              className={`w-full px-4 py-3 text-lg border ${
-                errors.startTime ? 'border-red-500' : 'border-gray-300'
-              } rounded-md focus:outline-none focus:ring-2 focus:ring-myongji`}
-            />
-            {errors.startTime && (
-              <p className="mt-2 text-base text-red-500">
-                {errors.startTime.message}
-              </p>
+          <Controller
+            name="startTime"
+            control={control}
+            rules={{
+              required: '시작 시간을 설정해주세요.',
+              validate: validateTimeRange,
+            }}
+            render={({ field }) => (
+              <TimeSelect
+                id="startTime"
+                label="시작 시간"
+                required={true}
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.startTime?.message}
+                startHour={8}
+                endHour={22}
+                placeholder="시작 시간을 선택하세요"
+              />
             )}
-          </div>
+          />
 
-          <div>
-            <label
-              htmlFor="endTime"
-              className="block text-lg font-medium text-gray-700 mb-2"
-            >
-              종료 시간 <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="time"
-              id="endTime"
-              defaultValue="17:00"
-              {...register('endTime', {
-                required: '종료 시간을 설정해주세요.',
-                validate: validateTimeRange,
-              })}
-              className={`w-full px-4 py-3 text-lg border ${
-                errors.endTime ? 'border-red-500' : 'border-gray-300'
-              } rounded-md focus:outline-none focus:ring-2 focus:ring-myongji`}
-            />
-            {errors.endTime && (
-              <p className="mt-2 text-base text-red-500">
-                {errors.endTime.message}
-              </p>
+          <Controller
+            name="endTime"
+            control={control}
+            rules={{
+              required: '종료 시간을 설정해주세요.',
+              validate: validateTimeRange,
+            }}
+            render={({ field }) => (
+              <TimeSelect
+                id="endTime"
+                label="종료 시간"
+                required={true}
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.endTime?.message}
+                startHour={8}
+                endHour={22}
+                placeholder="종료 시간을 선택하세요"
+              />
             )}
-          </div>
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
