@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { useCreateReservation } from '@/hooks/useReservation';
@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { Reservation } from '@/types/reservation';
 import ProfessorSearchModal from '@/components/feature/student/reservation/ProfessorSearchModal';
 import ReservationSuccessModal from '@/components/feature/student/reservation/ReservationSuccessModal';
+import TimeSelect from '@/components/common/TimeSelect';
 
 type ReservationFormProps = {
   selectedDate: string;
@@ -91,18 +92,6 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
 
   const startDateTime = watch('startDateTime');
 
-  const timeOptions = useMemo(
-    () =>
-      Array.from({ length: 36 }, (_, i) => {
-        const hour = Math.floor(i / 2) + 6;
-        const minute = (i % 2) * 30;
-        return `${hour.toString().padStart(2, '0')}:${minute
-          .toString()
-          .padStart(2, '0')}`;
-      }),
-    []
-  );
-
   const onSubmit = async (data: Reservation) => {
     if (!isLoggedIn) {
       alert('로그인이 필요한 서비스입니다.');
@@ -157,8 +146,7 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
     label: string,
     placeholder: string,
     type: string = 'text',
-    rules: Record<string, unknown> = {},
-    options?: React.ReactNode
+    rules: Record<string, unknown> = {}
   ) => (
     <div>
       <label className="block text-lg font-medium mb-2" htmlFor={name}>
@@ -168,34 +156,19 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
         name={name}
         control={control}
         rules={rules}
-        render={({ field }) =>
-          type === 'select' ? (
-            <select
-              {...field}
-              id={name}
-              className={`w-full px-4 py-2 border ${
-                errors[name] ? 'border-red-500' : 'border-gray-300'
-              } rounded-md`}
-              disabled={name === 'endDateTime' && !startDateTime}
-              value={field.value?.toString() || ''}
-            >
-              <option value="">{placeholder}</option>
-              {options}
-            </select>
-          ) : (
-            <input
-              {...field}
-              type={type}
-              id={name}
-              className={`w-full px-4 py-2 border ${
-                errors[name] ? 'border-red-500' : 'border-gray-300'
-              } rounded-md`}
-              placeholder={placeholder}
-              min={type === 'number' ? '1' : undefined}
-              value={field.value?.toString() || ''}
-            />
-          )
-        }
+        render={({ field }) => (
+          <input
+            {...field}
+            type={type}
+            id={name}
+            className={`w-full px-4 py-2 border ${
+              errors[name] ? 'border-red-500' : 'border-gray-300'
+            } rounded-md`}
+            placeholder={placeholder}
+            min={type === 'number' ? '1' : undefined}
+            value={field.value?.toString() || ''}
+          />
+        )}
       />
       {errors[name] && (
         <p className="text-red-500 text-sm mt-1">
@@ -241,37 +214,52 @@ function ReservationForm({ selectedDate }: ReservationFormProps) {
             />
           </div>
 
-          {renderField(
-            'startDateTime',
-            '시작 시간',
-            '시작 시간 선택',
-            'select',
-            { required: '시작 시간을 선택해주세요' },
-            timeOptions.map((time) => (
-              <option key={time} value={time}>
-                {time}
-              </option>
-            ))
-          )}
+          <Controller
+            name="startDateTime"
+            control={control}
+            rules={{ required: '시작 시간을 선택해주세요' }}
+            render={({ field }) => (
+              <TimeSelect
+                id="startDateTime"
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.startDateTime?.message?.toString()}
+                label="시작 시간"
+                required
+                startHour={8}
+                endHour={22}
+                placeholder="시작 시간 선택"
+              />
+            )}
+          />
 
-          {renderField(
-            'endDateTime',
-            '종료 시간',
-            '종료 시간 선택',
-            'select',
-            {
+          <Controller
+            name="endDateTime"
+            control={control}
+            rules={{
               required: '종료 시간을 선택해주세요',
-            },
-            timeOptions.map((time) => (
-              <option
-                key={time}
-                value={time}
-                disabled={startDateTime ? time <= startDateTime : false}
-              >
-                {time}
-              </option>
-            ))
-          )}
+              validate: (value) => {
+                if (startDateTime && value <= startDateTime) {
+                  return '종료 시간은 시작 시간보다 늦어야 합니다';
+                }
+                return true;
+              },
+            }}
+            render={({ field }) => (
+              <TimeSelect
+                id="endDateTime"
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.endDateTime?.message?.toString()}
+                label="종료 시간"
+                required
+                startHour={8}
+                endHour={22}
+                placeholder="종료 시간 선택"
+                disabled={!startDateTime}
+              />
+            )}
+          />
         </div>
 
         <div className="flex justify-center mt-8">

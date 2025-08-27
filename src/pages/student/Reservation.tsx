@@ -5,17 +5,17 @@ import { TimeTable } from '@/components/feature/student/reservation/TimeTable';
 import ReservationForm from '@/components/feature/student/reservation/ReservationForm';
 import { useFacilityDetail } from '@/hooks/useFacility';
 import { Facility } from '@/types/facility';
+import { getTodayLocal } from '@/utils/date';
 
 const Reservation = () => {
-  const [selectedDate, setSelectedDate] = useState<string>(
-    new Date().toISOString().split('T')[0]
-  );
+  const [selectedDate, setSelectedDate] = useState<string>(getTodayLocal());
   const { facilityId } = useParams<{ facilityId: string }>();
   const { data, isLoading, isError } = useFacilityDetail(
     facilityId,
     selectedDate
   );
   const facilityData = data?.data as Facility | undefined;
+
   const handleDateChange = (date: string) => {
     setSelectedDate(date);
   };
