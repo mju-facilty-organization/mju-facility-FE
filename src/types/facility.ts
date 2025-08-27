@@ -16,4 +16,5 @@ export type Facility = {
   startTime: string;
   endTime: string;
   isAvailable: boolean;
+  imageMetas?: { key: string; url: string }[];
 };

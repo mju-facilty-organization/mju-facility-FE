@@ -3,25 +3,23 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 
-import { useUpdateFacility } from '@/hooks/useFacility';
+import { useUpdateFacility, useFacilityDetail } from '@/hooks/useFacility';
 import {
   DEPARTMENT_ENGLISH_TO_KOREAN,
   DEPARTMENTS,
   College,
   Department,
 } from '@/constants/department';
-import { BUILDINGS } from '@/constants/building';
-import { Facility } from '@/types/facility';
+import { BUILDINGS, FACILITY_TYPE_MAP } from '@/constants/building';
+
+import TimeSelect from '@/components/common/TimeSelect';
 
 type FacilityEditFormData = {
-  facilityType: string;
-  facilityNumber: string;
   supportFacilities: string[];
   startTime: string;
   endTime: string;
   capacity: number;
   isAvailable: boolean;
-  college: College;
   allowedBoundary: Department[];
   addFileNames: string[];
   removeKeys: string[];
@@ -34,16 +32,21 @@ const FacilityEditForm = () => {
   const updateFacilityMutation = useUpdateFacility();
 
   const {
+    data: facilityDetail,
+    isLoading,
+    isError,
+  } = useFacilityDetail(facilityId ? Number(facilityId) : undefined);
+
+  const {
     register,
     handleSubmit,
     control,
     setValue,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<FacilityEditFormData>({
     mode: 'onChange',
     defaultValues: {
-      facilityType: '',
-      facilityNumber: '',
       supportFacilities: [],
       startTime: '',
       endTime: '',
@@ -56,7 +59,6 @@ const FacilityEditForm = () => {
     },
   });
 
-  const selectedCollege = useWatch({ control, name: 'college' });
   const allowedBoundary = useWatch({
     control,
     name: 'allowedBoundary',
@@ -80,10 +82,68 @@ const FacilityEditForm = () => {
   const startTime = useWatch({ control, name: 'startTime' });
   const endTime = useWatch({ control, name: 'endTime' });
 
+  const [selectedCollege, setSelectedCollege] = useState<College | ''>('');
+  const [facilityType, setFacilityType] = useState('');
+  const [facilityNumber, setFacilityNumber] = useState('');
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [filePreviewUrls, setFilePreviewUrls] = useState<string[]>([]);
   const [existingFiles, setExistingFiles] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const extractS3KeyFromUrl = (url: string): string => {
+    try {
+      const urlObj = new URL(url);
+      const s3Key = decodeURIComponent(urlObj.pathname.substring(1));
+      return s3Key;
+    } catch (error) {
+      console.warn('Failed to parse URL:', url, error);
+      return url;
+    }
+  };
+
+  useEffect(() => {
+    if (facilityDetail?.data) {
+      const facility = facilityDetail.data;
+
+      const koreanFacilityType =
+        FACILITY_TYPE_MAP[facility.facilityType] || facility.facilityType;
+
+      const koreanDepartments = facility.allowedBoundary.map(
+        (deptEng: string) => DEPARTMENT_ENGLISH_TO_KOREAN[deptEng] || deptEng
+      ) as Department[];
+
+      let facilityCollege: College | '' = '';
+      for (const [college, departments] of Object.entries(DEPARTMENTS)) {
+        if (departments.some((dept) => koreanDepartments.includes(dept))) {
+          facilityCollege = college as College;
+          break;
+        }
+      }
+
+      setFacilityType(koreanFacilityType);
+      setFacilityNumber(facility.facilityNumber);
+      setSelectedCollege(facilityCollege);
+
+      const formData = {
+        supportFacilities: facility.supportFacilities || [],
+        startTime: '',
+        endTime: '',
+        capacity: facility.capacity,
+        isAvailable: facility.isAvailable ?? true,
+        allowedBoundary: koreanDepartments,
+        addFileNames: [],
+        removeKeys: [],
+        newOrder: [],
+      };
+
+      reset(formData);
+
+      if (facility.imageMetas && facility.imageMetas.length > 0) {
+        const imageUrls = facility.imageMetas.map((meta) => meta.url);
+        setExistingFiles(imageUrls);
+      }
+    }
+  }, [facilityDetail, reset]);
 
   useEffect(() => {
     if (selectedCollege) {
@@ -125,8 +185,9 @@ const FacilityEditForm = () => {
   };
 
   const handleRemoveExistingFile = (index: number) => {
-    const fileToRemove = existingFiles[index];
-    setValue('removeKeys', [...removeKeys, fileToRemove]);
+    const fileUrl = existingFiles[index];
+    const s3Key = extractS3KeyFromUrl(fileUrl);
+    setValue('removeKeys', [...removeKeys, s3Key]);
     setExistingFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -160,37 +221,15 @@ const FacilityEditForm = () => {
 
   const onSubmit = async (data: FacilityEditFormData) => {
     try {
-      const allowedBoundaryInEnglish = data.allowedBoundary.map((dept) => {
-        return (
-          Object.keys(DEPARTMENT_ENGLISH_TO_KOREAN).find(
-            (key) => DEPARTMENT_ENGLISH_TO_KOREAN[key] === dept
-          ) || dept
-        );
-      });
-
-      const facilityData: Facility = {
-        ...data,
-        allowedBoundary: allowedBoundaryInEnglish,
-      };
-
       await updateFacilityMutation.mutateAsync({
         facilityId: Number(facilityId),
-        facilityData,
+        facilityData: data,
         newFiles: newFiles.length > 0 ? newFiles : undefined,
       });
 
-      toast.success('시설이 성공적으로 수정되었습니다.');
       navigate('/admin/facilities');
-    } catch (error: any) {
+    } catch (error) {
       console.error('시설 수정 오류:', error);
-
-      if (error?.status === 409) {
-        toast.error('이미 사용 중인 시설 번호입니다.');
-      } else if (error?.status === 400) {
-        toast.error('입력 정보를 확인해주세요.');
-      } else {
-        toast.error('시설 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
-      }
     }
   };
 
@@ -201,11 +240,41 @@ const FacilityEditForm = () => {
     );
   };
 
+  const hasImages = existingFiles.length > 0 || newFiles.length > 0;
+
   useEffect(() => {
     return () => {
       filePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [filePreviewUrls]);
+
+  if (isLoading) {
+    return (
+      <div className="bg-white p-8 rounded-lg shadow-md">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin h-8 w-8 border-b-2 border-myongji"></div>
+          <span className="ml-3 text-lg">시설 정보를 불러오는 중...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="bg-white p-8 rounded-lg shadow-md">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">오류 발생</h2>
+          <p className="text-gray-600 mb-4">시설 정보를 불러올 수 없습니다.</p>
+          <button
+            onClick={() => navigate('/admin/facilities')}
+            className="px-4 py-2 bg-myongji text-white rounded-md hover:bg-myongji-dark"
+          >
+            목록으로 돌아가기
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-md">
@@ -222,15 +291,9 @@ const FacilityEditForm = () => {
             </label>
             <select
               id="facilityType"
-              {...register('facilityType', {
-                required: '시설 유형을 선택해주세요.',
-              })}
-              className={`w-full px-4 py-3 text-lg border ${
-                errors.facilityType ? 'border-red-500' : 'border-gray-300'
-              } rounded-md focus:outline-none focus:ring-2 focus:ring-myongji`}
-              aria-describedby={
-                errors.facilityType ? 'facilityType-error' : undefined
-              }
+              value={facilityType}
+              disabled
+              className="w-full px-4 py-3 text-lg border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
             >
               <option value="">선택하세요</option>
               {BUILDINGS.map((building) => (
@@ -239,15 +302,9 @@ const FacilityEditForm = () => {
                 </option>
               ))}
             </select>
-            {errors.facilityType && (
-              <p
-                id="facilityType-error"
-                className="mt-2 text-base text-red-500"
-                role="alert"
-              >
-                {errors.facilityType.message}
-              </p>
-            )}
+            <p className="mt-1 text-sm text-gray-500">
+              시설 유형은 수정할 수 없습니다.
+            </p>
           </div>
 
           <div>
@@ -261,25 +318,13 @@ const FacilityEditForm = () => {
               type="text"
               id="facilityNumber"
               placeholder="예: S1350"
-              {...register('facilityNumber', {
-                required: '시설 번호를 입력해주세요.',
-              })}
-              className={`w-full px-4 py-3 text-lg border ${
-                errors.facilityNumber ? 'border-red-500' : 'border-gray-300'
-              } rounded-md focus:outline-none focus:ring-2 focus:ring-myongji`}
-              aria-describedby={
-                errors.facilityNumber ? 'facilityNumber-error' : undefined
-              }
+              value={facilityNumber}
+              disabled
+              className="w-full px-4 py-3 text-lg border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
             />
-            {errors.facilityNumber && (
-              <p
-                id="facilityNumber-error"
-                className="mt-2 text-base text-red-500"
-                role="alert"
-              >
-                {errors.facilityNumber.message}
-              </p>
-            )}
+            <p className="mt-1 text-sm text-gray-500">
+              시설 번호는 수정할 수 없습니다.
+            </p>
           </div>
         </div>
 
@@ -325,67 +370,45 @@ const FacilityEditForm = () => {
             )}
           </div>
 
-          <div>
-            <label
-              htmlFor="startTime"
-              className="block text-lg font-medium text-gray-700 mb-2"
-            >
-              시작 시간 <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="time"
-              id="startTime"
-              {...register('startTime', {
-                required: '시작 시간을 설정해주세요.',
-                validate: validateTimeRange,
-              })}
-              className={`w-full px-4 py-3 text-lg border ${
-                errors.startTime ? 'border-red-500' : 'border-gray-300'
-              } rounded-md focus:outline-none focus:ring-2 focus:ring-myongji`}
-              aria-describedby={
-                errors.startTime ? 'startTime-error' : undefined
-              }
-            />
-            {errors.startTime && (
-              <p
-                id="startTime-error"
-                className="mt-2 text-base text-red-500"
-                role="alert"
-              >
-                {errors.startTime.message}
-              </p>
+          <Controller
+            name="startTime"
+            control={control}
+            rules={{
+              required: '시작 시간을 설정해주세요.',
+              validate: validateTimeRange,
+            }}
+            render={({ field }) => (
+              <TimeSelect
+                id="startTime"
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.startTime?.message}
+                label="시작 시간"
+                required
+                placeholder="시작 시간 선택"
+              />
             )}
-          </div>
+          />
 
-          <div>
-            <label
-              htmlFor="endTime"
-              className="block text-lg font-medium text-gray-700 mb-2"
-            >
-              종료 시간 <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="time"
-              id="endTime"
-              {...register('endTime', {
-                required: '종료 시간을 설정해주세요.',
-                validate: validateTimeRange,
-              })}
-              className={`w-full px-4 py-3 text-lg border ${
-                errors.endTime ? 'border-red-500' : 'border-gray-300'
-              } rounded-md focus:outline-none focus:ring-2 focus:ring-myongji`}
-              aria-describedby={errors.endTime ? 'endTime-error' : undefined}
-            />
-            {errors.endTime && (
-              <p
-                id="endTime-error"
-                className="mt-2 text-base text-red-500"
-                role="alert"
-              >
-                {errors.endTime.message}
-              </p>
+          <Controller
+            name="endTime"
+            control={control}
+            rules={{
+              required: '종료 시간을 설정해주세요.',
+              validate: validateTimeRange,
+            }}
+            render={({ field }) => (
+              <TimeSelect
+                id="endTime"
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.endTime?.message}
+                label="종료 시간"
+                required
+                placeholder="종료 시간 선택"
+              />
             )}
-          </div>
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -398,11 +421,9 @@ const FacilityEditForm = () => {
             </label>
             <select
               id="college"
-              {...register('college', { required: '단과대학을 선택해주세요.' })}
-              className={`w-full px-4 py-3 text-lg border ${
-                errors.college ? 'border-red-500' : 'border-gray-300'
-              } rounded-md focus:outline-none focus:ring-2 focus:ring-myongji`}
-              aria-describedby={errors.college ? 'college-error' : undefined}
+              value={selectedCollege}
+              onChange={(e) => setSelectedCollege(e.target.value as College)}
+              className="w-full px-4 py-3 text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-myongji"
             >
               <option value="">선택하세요</option>
               {Object.keys(DEPARTMENTS).map((collegeName) => (
@@ -411,15 +432,6 @@ const FacilityEditForm = () => {
                 </option>
               ))}
             </select>
-            {errors.college && (
-              <p
-                id="college-error"
-                className="mt-2 text-base text-red-500"
-                role="alert"
-              >
-                {errors.college.message}
-              </p>
-            )}
           </div>
 
           <div className="md:col-span-2">
@@ -495,7 +507,7 @@ const FacilityEditForm = () => {
 
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-3">
-            지원 시설
+            지원 시설 <span className="text-red-500">*</span>
           </label>
           <div className="flex flex-wrap gap-6" role="group">
             {['마이크', 'TV', '프로젝터', '컴퓨터', '화이트보드'].map(
@@ -512,17 +524,30 @@ const FacilityEditForm = () => {
               )
             )}
           </div>
+          <input
+            type="hidden"
+            {...register('supportFacilities', {
+              validate: (value) =>
+                (value || []).length > 0 ||
+                '최소 하나 이상의 지원 시설을 선택해주세요.',
+            })}
+          />
+          {errors.supportFacilities && (
+            <p className="mt-2 text-base text-red-500" role="alert">
+              {errors.supportFacilities.message}
+            </p>
+          )}
         </div>
 
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-3">
-            사용 가능 여부
+            사용 가능 여부 <span className="text-red-500">*</span>
           </label>
           <div className="flex space-x-8" role="group">
             <Controller
               name="isAvailable"
               control={control}
-              defaultValue={true}
+              rules={{ required: '사용 가능 여부를 선택해주세요.' }}
               render={({ field }) => (
                 <>
                   <label className="inline-flex items-center">
@@ -530,6 +555,7 @@ const FacilityEditForm = () => {
                       type="radio"
                       checked={field.value === true}
                       onChange={() => field.onChange(true)}
+                      onBlur={field.onBlur}
                       className="form-radio h-6 w-6 text-myongji focus:ring-myongji"
                     />
                     <span className="ml-2 text-lg">사용 가능</span>
@@ -539,6 +565,7 @@ const FacilityEditForm = () => {
                       type="radio"
                       checked={field.value === false}
                       onChange={() => field.onChange(false)}
+                      onBlur={field.onBlur}
                       className="form-radio h-6 w-6 text-myongji focus:ring-myongji"
                     />
                     <span className="ml-2 text-lg">사용 불가</span>
@@ -547,11 +574,16 @@ const FacilityEditForm = () => {
               )}
             />
           </div>
+          {errors.isAvailable && (
+            <p className="mt-2 text-base text-red-500" role="alert">
+              {errors.isAvailable.message}
+            </p>
+          )}
         </div>
 
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-3">
-            시설 이미지
+            시설 이미지 <span className="text-red-500">*</span>
           </label>
 
           <input
@@ -573,6 +605,12 @@ const FacilityEditForm = () => {
             이미지 추가 ({newFiles.length}개 선택됨)
           </button>
 
+          {!hasImages && (
+            <p className="mt-2 text-base text-red-500" role="alert">
+              최소 하나 이상의 이미지를 등록해주세요.
+            </p>
+          )}
+
           {existingFiles.length > 0 && (
             <div className="mt-5">
               <h4 className="text-sm font-medium text-gray-700 mb-2">
@@ -581,8 +619,19 @@ const FacilityEditForm = () => {
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
                 {existingFiles.map((file, index) => (
                   <div key={`existing-${index}`} className="relative group">
-                    <div className="h-32 w-full bg-gray-200 rounded-md flex items-center justify-center">
-                      <span className="text-sm text-gray-600">{file}</span>
+                    <div className="h-32 w-full bg-gray-200 rounded-md flex items-center justify-center overflow-hidden">
+                      <img
+                        src={file}
+                        alt={`기존 시설 이미지 ${index + 1}`}
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.parentElement!.innerHTML = `<span class="text-sm text-gray-600">이미지 ${
+                            index + 1
+                          }</span>`;
+                        }}
+                      />
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-sm p-2 text-center">
                       기존 파일
@@ -591,7 +640,7 @@ const FacilityEditForm = () => {
                       type="button"
                       onClick={() => handleRemoveExistingFile(index)}
                       className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 text-xl"
-                      aria-label={`기존 파일 ${file} 삭제`}
+                      aria-label={`기존 파일 ${index + 1} 삭제`}
                     >
                       ×
                     </button>
@@ -644,7 +693,9 @@ const FacilityEditForm = () => {
           <button
             type="submit"
             className="px-6 py-3 text-lg bg-myongji text-white rounded-md hover:bg-myongji-dark focus:outline-none focus:ring-2 focus:ring-myongji transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={isSubmitting || updateFacilityMutation.isPending}
+            disabled={
+              isSubmitting || updateFacilityMutation.isPending || !hasImages
+            }
           >
             {isSubmitting || updateFacilityMutation.isPending ? (
               <div className="flex items-center justify-center">

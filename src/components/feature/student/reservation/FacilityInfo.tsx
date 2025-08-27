@@ -14,8 +14,8 @@ export const FacilityInfo = ({
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    if (facilityData?.images && facilityData.images.length > 0) {
-      setSelectedImage(facilityData.images[0]);
+    if (facilityData?.imageMetas && facilityData.imageMetas.length > 0) {
+      setSelectedImage(facilityData.imageMetas[0].url);
     }
 
     setFailedImages({});
@@ -29,12 +29,13 @@ export const FacilityInfo = ({
 
     if (
       selectedImage === imageUrl &&
-      facilityData?.images &&
-      facilityData.images.length > 0
+      facilityData?.imageMetas &&
+      facilityData.imageMetas.length > 0
     ) {
-      const validImages = facilityData.images.filter(
-        (img: string) => !failedImages[img] && img !== imageUrl
-      );
+      const validImages = facilityData.imageMetas
+        .map((meta) => meta.url)
+        .filter((url: string) => !failedImages[url] && url !== imageUrl);
+
       if (validImages.length > 0) {
         setSelectedImage(validImages[0]);
       }
@@ -49,9 +50,10 @@ export const FacilityInfo = ({
     return null;
   }
 
-  const availableImages = (facilityData.images || []).filter(
-    (img: string) => !failedImages[img]
-  );
+  const availableImages = (facilityData.imageMetas || [])
+    .map((meta) => meta.url)
+    .filter((url: string) => !failedImages[url]);
+
   const visibleThumbnails = availableImages.slice(0, 3);
   const remainingCount = Math.max(0, availableImages.length - 3);
 
@@ -83,14 +85,14 @@ export const FacilityInfo = ({
 
           <div className="grid grid-cols-3 gap-3 mt-3">
             {visibleThumbnails.length > 0 ? (
-              visibleThumbnails.map((image, index) => (
-                <div key={image} className="relative">
+              visibleThumbnails.map((imageUrl, index) => (
+                <div key={imageUrl} className="relative">
                   <img
-                    src={image}
+                    src={imageUrl}
                     alt={`강의실 이미지 ${index + 1}`}
                     className="w-full h-24 object-cover rounded-md cursor-pointer"
-                    onClick={() => setSelectedImage(image)}
-                    onError={() => handleImageError(image)}
+                    onClick={() => setSelectedImage(imageUrl)}
+                    onError={() => handleImageError(imageUrl)}
                   />
                   {index === 2 && remainingCount > 0 && (
                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-md">

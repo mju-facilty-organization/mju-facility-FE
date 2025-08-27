@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
 import { Edit2, Trash2 } from 'lucide-react';
 import { DEPARTMENT_ENGLISH_TO_KOREAN } from '@/constants/department';
 import { FACILITY_TYPE_MAP } from '@/constants/building';
@@ -16,12 +15,8 @@ const FacilityList = () => {
   const handleEdit = (facilityId: number) => {
     navigate(`/admin/facilities/${facilityId}/edit`);
   };
-  const { data, isLoading, isError } = useFacilities(page);
+  const { data, isLoading } = useFacilities(page);
   const deleteFacilityMutation = useDeleteFacility();
-
-  if (isError) {
-    toast.error('시설 목록을 불러오는데 실패했습니다.');
-  }
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
