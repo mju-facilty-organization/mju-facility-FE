@@ -23,36 +23,30 @@ const TimetableUpload = () => {
   } | null>(null);
   const [error, setError] = useState('');
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      const fileExtension = selectedFile.name.split('.').pop()?.toLowerCase();
-      if (fileExtension === 'xlsx' || fileExtension === 'xls') {
-        setFile(selectedFile);
-        setError('');
-      } else {
-        setError('엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.');
-        setFile(null);
-      }
+  const isValidExcel = (fileName: string) => {
+    const ext = fileName.split('.').pop()?.toLowerCase();
+    return ext === 'xlsx' || ext === 'xls';
+  };
+
+  const handleFileSelect = (selectedFile: File | undefined) => {
+    if (!selectedFile) return;
+
+    if (isValidExcel(selectedFile.name)) {
+      setFile(selectedFile);
+      setError('');
+    } else {
+      setError('엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.');
+      setFile(null);
     }
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFileSelect(e.target.files?.[0]);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) {
-      const fileExtension = droppedFile.name.split('.').pop()?.toLowerCase();
-      if (fileExtension === 'xlsx' || fileExtension === 'xls') {
-        setFile(droppedFile);
-        setError('');
-      } else {
-        setError('엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.');
-      }
-    }
+    handleFileSelect(e.dataTransfer.files[0]);
   };
 
   const handleUpload = async () => {
@@ -61,25 +55,22 @@ const TimetableUpload = () => {
       return;
     }
 
+    if (validStartDate >= validEndDate) {
+      setError('시작일은 종료일보다 이전이어야 합니다.');
+      return;
+    }
+
     setIsUploading(true);
     setError('');
     setUploadResult(null);
 
     try {
-      const params: {
-        overwrite: boolean;
-        validStartDate?: string;
-        validEndDate?: string;
-      } = { overwrite };
+      const result = await uploadScheduleExcel(file, {
+        overwrite,
+        validStartDate,
+        validEndDate,
+      });
 
-      if (validStartDate) {
-        params.validStartDate = validStartDate;
-      }
-      if (validEndDate) {
-        params.validEndDate = validEndDate;
-      }
-
-      const result = await uploadScheduleExcel(file, params);
       setUploadResult({
         success: true,
         message: '시간표가 성공적으로 업로드되었습니다.',
@@ -107,6 +98,9 @@ const TimetableUpload = () => {
     setError('');
   };
 
+  const isUploadDisabled =
+    !file || !validStartDate || !validEndDate || isUploading;
+
   return (
     <div className="p-6 mx-auto">
       <div className="mb-8">
@@ -129,7 +123,7 @@ const TimetableUpload = () => {
                 ? 'border-green-300 bg-green-50'
                 : 'border-gray-300 hover:border-gray-400'
             }`}
-            onDragOver={handleDragOver}
+            onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
           >
             {file ? (
@@ -163,39 +157,34 @@ const TimetableUpload = () => {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                시작일 (선택사항)
-              </label>
-              <input
-                type="date"
-                value={validStartDate}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setValidStartDate(e.target.value)
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                미지정 시 서버 기본값 사용
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                종료일 (선택사항)
-              </label>
-              <input
-                type="date"
-                value={validEndDate}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setValidEndDate(e.target.value)
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                미지정 시 서버 기본값 사용
-              </p>
-            </div>
+            {[
+              {
+                label: '시작일',
+                value: validStartDate,
+                setter: setValidStartDate,
+                help: '시간표 적용 시작일을 선택해주세요',
+              },
+              {
+                label: '종료일',
+                value: validEndDate,
+                setter: setValidEndDate,
+                help: '시간표 적용 종료일을 선택해주세요',
+              },
+            ].map(({ label, value, setter, help }) => (
+              <div key={label}>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {label} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  value={value}
+                  onChange={(e) => setter(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">{help}</p>
+              </div>
+            ))}
           </div>
 
           <div className="mt-6 flex justify-between items-start">
@@ -204,9 +193,7 @@ const TimetableUpload = () => {
                 <input
                   type="checkbox"
                   checked={overwrite}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setOverwrite(e.target.checked)
-                  }
+                  onChange={(e) => setOverwrite(e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <span className="text-sm font-medium text-gray-700">
@@ -230,49 +217,48 @@ const TimetableUpload = () => {
           </div>
         </div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center">
-            <AlertCircle className="h-5 w-5 text-red-600 mr-3" />
-            <span className="text-red-700">{error}</span>
-          </div>
-        )}
-
-        {uploadResult && (
+        {(error || uploadResult) && (
           <div
             className={`border rounded-lg p-4 flex items-center ${
-              uploadResult.success
+              error
+                ? 'bg-red-50 border-red-200'
+                : uploadResult?.success
                 ? 'bg-green-50 border-green-200'
                 : 'bg-red-50 border-red-200'
             }`}
           >
-            {uploadResult.success ? (
-              <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+            {error ? (
+              <>
+                <AlertCircle className="h-5 w-5 text-red-600 mr-3" />
+                <span className="text-red-700">{error}</span>
+              </>
+            ) : uploadResult?.success ? (
+              <>
+                <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                <span className="text-green-700">{uploadResult.message}</span>
+              </>
             ) : (
-              <AlertCircle className="h-5 w-5 text-red-600 mr-3" />
+              <>
+                <AlertCircle className="h-5 w-5 text-red-600 mr-3" />
+                <span className="text-red-700">{uploadResult?.message}</span>
+              </>
             )}
-            <span
-              className={
-                uploadResult.success ? 'text-green-700' : 'text-red-700'
-              }
-            >
-              {uploadResult.message}
-            </span>
           </div>
         )}
 
         <div className="flex justify-end">
           <button
             onClick={handleUpload}
-            disabled={!file || isUploading}
+            disabled={isUploadDisabled}
             className={`flex items-center px-6 py-2 rounded-lg font-medium transition-colors ${
-              !file || isUploading
+              isUploadDisabled
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-myongji text-white hover:bg-blue-700'
             }`}
           >
             {isUploading ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                 업로드 중...
               </>
             ) : (
