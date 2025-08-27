@@ -45,6 +45,10 @@ export function useCreateFacility() {
     }) => {
       const response = await createFacility(facilityData);
 
+      if (response.resultType === 'FAIL') {
+        throw new Error(response.message || '시설 생성에 실패했습니다.');
+      }
+
       if (
         response.data?.presignedUrlList &&
         response.data.presignedUrlList.length > 0
@@ -63,6 +67,9 @@ export function useCreateFacility() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['facilities'] });
       toast.success('시설이 성공적으로 등록되었습니다.');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || '시설 생성에 실패했습니다.');
     },
   });
 }

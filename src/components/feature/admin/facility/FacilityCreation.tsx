@@ -28,7 +28,7 @@ const FacilityCreation = ({ onCreated, onCancel }) => {
   } = useForm<FacilityFormData>({
     mode: 'onChange',
     defaultValues: {
-      startTime: '09:00',
+      startTime: '08:00',
       endTime: '17:00',
     },
   });
@@ -113,7 +113,20 @@ const FacilityCreation = ({ onCreated, onCancel }) => {
 
     setValue('supportFacilities', updatedFacilities);
   };
+  const resetForm = () => {
+    reset({
+      startTime: '08:00',
+      endTime: '17:00',
+    });
 
+    filePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+    setFiles([]);
+    setFilePreviewUrls([]);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
   const onSubmit = async (data: FacilityFormData) => {
     if (files.length === 0) {
       toast.error('최소 1개 이상의 시설 이미지가 필요합니다.');
@@ -131,44 +144,17 @@ const FacilityCreation = ({ onCreated, onCancel }) => {
         supportFacilities: data.supportFacilities || [],
       };
 
-      const result = await createFacilityMutation.mutateAsync({
+      await createFacilityMutation.mutateAsync({
         facilityData,
         files,
       });
 
-      if (result.resultType === 'SUCCESS') {
-        toast.success('시설이 성공적으로 생성되었습니다.');
-        resetForm();
-
-        if (onCreated) {
-          onCreated();
-        }
-      } else {
-        toast.error(
-          `시설 생성에 실패했습니다: ${result.message || '알 수 없는 오류'}`
-        );
+      resetForm();
+      if (onCreated) {
+        onCreated();
       }
     } catch (error) {
-      toast.error(
-        `시설 생성 중 오류가 발생했습니다: ${
-          error instanceof Error ? error.message : '알 수 없는 오류'
-        }`
-      );
-    }
-  };
-
-  const resetForm = () => {
-    reset({
-      startTime: '09:00',
-      endTime: '17:00',
-    });
-
-    filePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
-    setFiles([]);
-    setFilePreviewUrls([]);
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      console.error(error);
     }
   };
 

@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import Header from '@/components/layout/Header';
 import Layout from '@/components/layout/Layout';
 import Footer from '@/components/layout/Footer';
@@ -28,6 +29,12 @@ export default function App() {
         </Layout>
         <Footer />
         {user?.role !== 'ADMIN' && <ChatbotFloatingButton />}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+          }}
+        />
       </div>
     </QueryClientProvider>
   );
