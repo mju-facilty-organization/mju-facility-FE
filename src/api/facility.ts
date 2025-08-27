@@ -65,6 +65,11 @@ export async function deleteFacility(facilityId: Facility['id']) {
   return response.data;
 }
 
+export async function deleteAllFacilities() {
+  const response = await api.delete('/admin/facilities/all');
+  return response.data;
+}
+
 export async function updateFacility(
   facilityId: Facility['id'],
   facilityData: Facility
