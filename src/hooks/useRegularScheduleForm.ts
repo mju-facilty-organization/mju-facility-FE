@@ -11,7 +11,7 @@ export const useRegularScheduleForm = () => {
 
   const [formData, setFormData] = useState<RegularScheduleFormData>({
     facilityId: '',
-    scheduleType: 'CLASS',
+    scheduleType: 'CLUB',
     ...getDefaultDates(),
     excludeHolidays: true,
     excludeWeekends: false,
@@ -43,7 +43,7 @@ export const useRegularScheduleForm = () => {
     setOrganization('');
     setFormData({
       facilityId: '',
-      scheduleType: 'CLASS',
+      scheduleType: 'CLUB',
       ...getDefaultDates(),
       excludeHolidays: true,
       excludeWeekends: false,
