@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useSidebarStore } from '@/store/useSidebarStore';
 import {
@@ -17,6 +17,7 @@ import {
 const Sidebar = () => {
   const { user } = useAuthStore();
   const { close } = useSidebarStore();
+  const sidebarRef = useRef<HTMLDivElement>(null);
   const isAdmin = user?.role === 'ADMIN';
   const isStudent = user?.role === 'STUDENT';
 
@@ -37,8 +38,30 @@ const Sidebar = () => {
     }));
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node)
+      ) {
+        close();
+      }
+    };
+
+    if (!isAdmin) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [close, isAdmin]);
+
   return (
-    <div className="h-full w-80 bg-white border-r border-gray-200 rounded-r-xl shadow-sm flex flex-col">
+    <div
+      ref={sidebarRef}
+      className="h-full w-80 bg-white border-r border-gray-200 rounded-r-xl shadow-sm flex flex-col"
+    >
       <div className="flex justify-between items-center px-6 py-8">
         <h1 className="text-2xl font-bold text-myongji">MJU Space</h1>
         {!isAdmin && (
