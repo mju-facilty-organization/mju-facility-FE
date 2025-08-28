@@ -46,12 +46,12 @@ export const Dropdown = ({
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative w-full" ref={dropdownRef}>
       <button
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={`
-          relative w-60 px-4 py-3 text-left bg-white border-2 rounded-xl
+          relative w-full px-4 py-3 text-left bg-white border-2 rounded-xl
           transition-all duration-200 ease-in-out
           ${
             disabled

@@ -108,8 +108,8 @@ const ClassroomLookup = () => {
 
   if (isError) {
     return (
-      <div className="max-w-7xl mx-auto text-center py-12">
-        <p className="text-lg text-red-600 mb-4">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 text-center py-12">
+        <p className="text-base md:text-lg text-red-600 mb-4">
           시설 목록을 불러오는데 실패했습니다.
         </p>
         <button
@@ -123,18 +123,18 @@ const ClassroomLookup = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold text-center mb-12">
+    <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-8 md:mb-12">
         인문캠퍼스 공간 예약하기
       </h1>
 
-      <div className="bg-white rounded-2xl p-3 shadow-md mb-8">
-        <div className="flex flex-wrap">
+      <div className="bg-white rounded-2xl p-3 md:p-4 shadow-md mb-6 md:mb-8">
+        <div className="flex flex-wrap gap-2 md:gap-0">
           {BUILDINGS.map((building) => (
             <button
               key={building}
               onClick={() => handleBuildingSelect(building)}
-              className={`px-8 py-3 text-xl rounded-full transition-colors hover:text-myongji ${
+              className={`px-4 md:px-8 py-2 md:py-3 text-base md:text-xl rounded-full transition-colors hover:text-myongji ${
                 selectedBuilding === building
                   ? 'text-myongji font-bold'
                   : 'text-gray-600'
@@ -147,53 +147,60 @@ const ClassroomLookup = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-between gap-6 mb-8">
-        <div className="flex gap-4">
-          <Dropdown
-            value={selectedDepartment}
-            placeholder="대학/학부"
-            options={Object.keys(DEPARTMENTS)}
-            onChange={(value) => handleDepartmentSelect(value)}
-          />
-          <Dropdown
-            value={selectedMajor}
-            placeholder="학과/전공"
-            options={
-              selectedDepartment
-                ? DEPARTMENTS[selectedDepartment as keyof typeof DEPARTMENTS]
-                : []
-            }
-            onChange={handleMajorSelect}
-            disabled={!selectedDepartment}
-          />
+      <div className="flex flex-col md:flex-row md:justify-between gap-4 md:gap-6 mb-6 md:mb-8">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-4 w-full md:w-auto">
+          <div className="w-full md:w-auto md:min-w-[200px]">
+            <Dropdown
+              value={selectedDepartment}
+              placeholder="대학/학부"
+              options={Object.keys(DEPARTMENTS)}
+              onChange={(value) => handleDepartmentSelect(value)}
+            />
+          </div>
+          <div className="w-full md:w-auto md:min-w-[200px]">
+            <Dropdown
+              value={selectedMajor}
+              placeholder="학과/전공"
+              options={
+                selectedDepartment
+                  ? DEPARTMENTS[selectedDepartment as keyof typeof DEPARTMENTS]
+                  : []
+              }
+              onChange={handleMajorSelect}
+              disabled={!selectedDepartment}
+            />
+          </div>
         </div>
 
-        <div />
-        <SearchInput
-          value={searchQuery}
-          onChange={handleSearch}
-          placeholder="강의실 검색"
-        />
+        <div className="w-full md:w-auto md:min-w-[200px]">
+          <SearchInput
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="강의실 검색"
+          />
+        </div>
       </div>
 
       {!isLoading && filteredFacilities.length > 0 && (
-        <div className="mb-4 text-gray-600">
+        <div className="mb-4 text-sm md:text-base text-gray-600">
           총 {filteredFacilities.length}개의 시설이 있습니다.
         </div>
       )}
 
       {isLoading ? (
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-myongji"></div>
+          <div className="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-t-2 border-b-2 border-myongji"></div>
         </div>
       ) : displayFacilities.length === 0 ? (
         <div className="col-span-3 text-center py-12 text-gray-500">
-          {filteredFacilities.length === 0
-            ? '검색 결과가 없습니다.'
-            : '표시할 시설이 없습니다.'}
+          <div className="text-base md:text-lg">
+            {filteredFacilities.length === 0
+              ? '검색 결과가 없습니다.'
+              : '표시할 시설이 없습니다.'}
+          </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
           {displayFacilities.map((facility: Facility) => {
             const facilityId =
               facility.id?.toString() || facility.facilityNumber;
@@ -214,7 +221,10 @@ const ClassroomLookup = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <School size={48} className="text-gray-400" />
+                      <School
+                        size={32}
+                        className="text-gray-400 md:w-12 md:h-12"
+                      />
                     </div>
                   )
                 }
@@ -227,11 +237,13 @@ const ClassroomLookup = () => {
       )}
 
       {!isLoading && totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+        <div className="mt-8 md:mt-12">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       )}
     </div>
   );
