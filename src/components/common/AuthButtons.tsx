@@ -41,7 +41,7 @@ const AuthButtons = () => {
               로딩 중...
             </span>
           ) : (
-            <span className="text-white text-sm sm:text-base md:text-xl">
+            <span className="text-white text-xl">
               {memberData?.data?.name || user?.name || ''}님
             </span>
           )}
@@ -50,7 +50,7 @@ const AuthButtons = () => {
       ) : (
         <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
           <NavButton to="/login">로그인</NavButton>
-          <span className="text-white text-sm sm:text-base md:text-xl">|</span>
+          <span className="text-white ">|</span>
           <NavButton to="/privacy-agreement">회원가입</NavButton>
         </div>
       )}
