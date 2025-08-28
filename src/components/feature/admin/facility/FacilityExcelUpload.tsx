@@ -62,7 +62,7 @@ const FacilityFileUpload: React.FC<FacilityFileUploadProps> = ({
 
       toast.success(
         `파일이 성공적으로 업로드되었습니다. ${
-          result.createdCount || 0
+          result.data.success || 0
         }개의 시설이 등록되었습니다.`
       );
       onCreated?.();
