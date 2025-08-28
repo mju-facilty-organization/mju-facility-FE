@@ -6,8 +6,24 @@ import {
   CheckCircle,
   Calendar,
   RotateCcw,
+  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { uploadScheduleExcel } from '@/api/facilityschedule';
+
+type UploadError = {
+  rowIndex: number;
+  field: string;
+  reason: string;
+};
+
+type UploadResultData = {
+  totalRows: number;
+  successCount: number;
+  failedCount: number;
+  errors: UploadError[];
+};
 
 const TimetableUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -18,10 +34,11 @@ const TimetableUpload = () => {
   const [uploadResult, setUploadResult] = useState<{
     success: boolean;
     message: string;
-    data?: unknown;
+    data?: UploadResultData;
     error?: unknown;
   } | null>(null);
   const [error, setError] = useState('');
+  const [showErrorDetails, setShowErrorDetails] = useState(false);
 
   const isValidExcel = (fileName: string) => {
     const ext = fileName.split('.').pop()?.toLowerCase();
@@ -63,6 +80,7 @@ const TimetableUpload = () => {
     setIsUploading(true);
     setError('');
     setUploadResult(null);
+    setShowErrorDetails(false);
 
     try {
       const result = await uploadScheduleExcel(file, {
@@ -71,10 +89,14 @@ const TimetableUpload = () => {
         validEndDate,
       });
 
+      const hasErrors = result.data?.errors && result.data.errors.length > 0;
+
       setUploadResult({
-        success: true,
-        message: '시간표가 성공적으로 업로드되었습니다.',
-        data: result,
+        success: !hasErrors,
+        message: hasErrors
+          ? `업로드 완료: 총 ${result.data.totalRows}개 중 ${result.data.successCount}개 성공, ${result.data.failedCount}개 실패`
+          : '시간표가 성공적으로 업로드되었습니다.',
+        data: result.data,
       });
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
@@ -96,10 +118,123 @@ const TimetableUpload = () => {
     setOverwrite(true);
     setUploadResult(null);
     setError('');
+    setShowErrorDetails(false);
   };
 
   const isUploadDisabled =
     !file || !validStartDate || !validEndDate || isUploading;
+
+  const renderUploadResult = () => {
+    if (!uploadResult) return null;
+
+    const hasPartialSuccess =
+      uploadResult.data?.successCount > 0 && uploadResult.data?.failedCount > 0;
+    const hasErrors =
+      uploadResult.data?.errors && uploadResult.data.errors.length > 0;
+
+    return (
+      <div
+        className={`border rounded-lg p-4 ${
+          error
+            ? 'bg-red-50 border-red-200'
+            : uploadResult.success
+            ? 'bg-green-50 border-green-200'
+            : hasPartialSuccess
+            ? 'bg-yellow-50 border-yellow-200'
+            : 'bg-red-50 border-red-200'
+        }`}
+      >
+        <div className="flex items-start">
+          {error ? (
+            <AlertCircle className="h-5 w-5 text-red-600 mr-3 mt-0.5" />
+          ) : uploadResult.success ? (
+            <CheckCircle className="h-5 w-5 text-green-600 mr-3 mt-0.5" />
+          ) : hasPartialSuccess ? (
+            <AlertTriangle className="h-5 w-5 text-yellow-600 mr-3 mt-0.5" />
+          ) : (
+            <AlertCircle className="h-5 w-5 text-red-600 mr-3 mt-0.5" />
+          )}
+
+          <div className="flex-1">
+            <span
+              className={
+                error
+                  ? 'text-red-700'
+                  : uploadResult.success
+                  ? 'text-green-700'
+                  : hasPartialSuccess
+                  ? 'text-yellow-700'
+                  : 'text-red-700'
+              }
+            >
+              {error || uploadResult.message}
+            </span>
+
+            {uploadResult.data && (
+              <div className="mt-2 space-y-2">
+                <div className="text-sm">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center p-2 bg-white rounded border">
+                      <div className="text-lg font-bold text-gray-900">
+                        {uploadResult.data.totalRows}
+                      </div>
+                      <div className="text-xs text-gray-600">총 처리</div>
+                    </div>
+                    <div className="text-center p-2 bg-white rounded border">
+                      <div className="text-lg font-bold text-green-600">
+                        {uploadResult.data.successCount}
+                      </div>
+                      <div className="text-xs text-gray-600">성공</div>
+                    </div>
+                    <div className="text-center p-2 bg-white rounded border">
+                      <div className="text-lg font-bold text-red-600">
+                        {uploadResult.data.failedCount}
+                      </div>
+                      <div className="text-xs text-gray-600">실패</div>
+                    </div>
+                  </div>
+                </div>
+
+                {hasErrors && (
+                  <div className="mt-3">
+                    <button
+                      onClick={() => setShowErrorDetails(!showErrorDetails)}
+                      className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-900"
+                    >
+                      {showErrorDetails ? (
+                        <ChevronUp className="h-4 w-4 mr-1" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4 mr-1" />
+                      )}
+                      에러 상세 정보 {showErrorDetails ? '숨기기' : '보기'}
+                    </button>
+
+                    {showErrorDetails && (
+                      <div className="mt-3 space-y-3">
+                        {uploadResult.data.errors.map((error, index) => (
+                          <div
+                            key={index}
+                            className="bg-white border border-red-200 rounded-lg p-3 text-sm"
+                          >
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="font-medium text-red-800">
+                                행 {error.rowIndex} - {error.field} 오류
+                              </div>
+                            </div>
+                            <div className="text-red-700">{error.reason}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="p-6 mx-auto">
@@ -217,34 +352,7 @@ const TimetableUpload = () => {
           </div>
         </div>
 
-        {(error || uploadResult) && (
-          <div
-            className={`border rounded-lg p-4 flex items-center ${
-              error
-                ? 'bg-red-50 border-red-200'
-                : uploadResult?.success
-                ? 'bg-green-50 border-green-200'
-                : 'bg-red-50 border-red-200'
-            }`}
-          >
-            {error ? (
-              <>
-                <AlertCircle className="h-5 w-5 text-red-600 mr-3" />
-                <span className="text-red-700">{error}</span>
-              </>
-            ) : uploadResult?.success ? (
-              <>
-                <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
-                <span className="text-green-700">{uploadResult.message}</span>
-              </>
-            ) : (
-              <>
-                <AlertCircle className="h-5 w-5 text-red-600 mr-3" />
-                <span className="text-red-700">{uploadResult?.message}</span>
-              </>
-            )}
-          </div>
-        )}
+        {(error || uploadResult) && renderUploadResult()}
 
         <div className="flex justify-end">
           <button
