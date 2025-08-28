@@ -54,8 +54,8 @@ export const FacilityInfo = ({
     .map((meta) => meta.url)
     .filter((url: string) => !failedImages[url]);
 
-  const visibleThumbnails = availableImages.slice(0, 3);
-  const remainingCount = Math.max(0, availableImages.length - 3);
+  const visibleThumbnails = availableImages.slice(0, 4);
+  const remainingCount = Math.max(0, availableImages.length - 4);
 
   const koreanAllowedBoundary =
     facilityData.allowedBoundary?.map(getKoreanDepartmentName) || [];
@@ -83,34 +83,34 @@ export const FacilityInfo = ({
             </div>
           )}
 
-          <div className="grid grid-cols-3 gap-3 mt-3">
-            {visibleThumbnails.length > 0 ? (
-              visibleThumbnails.map((imageUrl, index) => (
-                <div key={imageUrl} className="relative">
-                  <img
-                    src={imageUrl}
-                    alt={`강의실 이미지 ${index + 1}`}
-                    className="w-full h-24 object-cover rounded-md cursor-pointer"
-                    onClick={() => setSelectedImage(imageUrl)}
-                    onError={() => handleImageError(imageUrl)}
-                  />
-                  {index === 2 && remainingCount > 0 && (
-                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-md">
-                      <span className="text-white font-medium">
-                        +{remainingCount}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))
-            ) : (
-              <>
-                <div className="w-full h-24 bg-gray-100 rounded-md"></div>
-                <div className="w-full h-24 bg-gray-100 rounded-md"></div>
-                <div className="w-full h-24 bg-gray-100 rounded-md"></div>
-              </>
-            )}
-          </div>
+          {availableImages.length > 1 && (
+            <div className="mt-3">
+              <div className="grid grid-cols-4 gap-2">
+                {visibleThumbnails.map((imageUrl, index) => (
+                  <div key={imageUrl} className="relative">
+                    <img
+                      src={imageUrl}
+                      alt={`강의실 이미지 ${index + 1}`}
+                      className={`w-full h-16 object-cover rounded-md cursor-pointer transition-all duration-200 ${
+                        selectedImage === imageUrl
+                          ? 'ring-2 ring-blue-500 ring-offset-2'
+                          : 'hover:opacity-80'
+                      }`}
+                      onClick={() => setSelectedImage(imageUrl)}
+                      onError={() => handleImageError(imageUrl)}
+                    />
+                    {index === 3 && remainingCount > 0 && (
+                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-md cursor-pointer">
+                        <span className="text-white font-medium text-sm">
+                          +{remainingCount}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="md:w-1/2 bg-gray-50 rounded-xl p-6">
