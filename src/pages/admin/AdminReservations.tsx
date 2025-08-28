@@ -40,7 +40,14 @@ const AdminReservations = () => {
     error: detailError,
   } = useGetReservationDetail(selectedReservationId);
 
-  const reservations: Reservation[] = data?.data?.content || [];
+  const rawReservations: Reservation[] = data?.data?.content || [];
+
+  const reservations = [...rawReservations].sort((a, b) => {
+    const dateA = new Date(a.createAt || 0);
+    const dateB = new Date(b.createAt || 0);
+    return dateB.getTime() - dateA.getTime();
+  });
+
   const totalPages = data?.data?.totalPages || 1;
 
   const handlePageChange = (page: number) => {
@@ -119,9 +126,6 @@ const AdminReservations = () => {
                     <th className="px-6 py-3 text-center text-lg font-medium text-gray-500">
                       처리 일시
                     </th>
-                    {/* <th className="px-6 py-3 text-center text-lg font-medium text-gray-500">
-                      교수 승인
-                    </th> */}
                     <th className="px-6 py-3 text-center text-lg font-medium text-gray-500">
                       상태
                     </th>
@@ -165,12 +169,6 @@ const AdminReservations = () => {
                           <td className="px-6 py-4 text-lg text-gray-custom text-center">
                             {safeFormatDate(reservation.defineDateTime)}
                           </td>
-                          {/* <td className="px-6 py-4 text-lg text-gray-custom text-center">
-                            {typeof reservation.professorApprovalResponse ===
-                            'string'
-                              ? reservation.professorApprovalResponse
-                              : '-'}
-                          </td> */}
                           <td className="px-6 py-4 text-lg text-center">
                             <span
                               className={`px-3 py-2 text-lg rounded-full ${getStatusStyles(
