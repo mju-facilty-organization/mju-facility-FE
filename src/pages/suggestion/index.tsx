@@ -73,6 +73,19 @@ const Suggestion = () => {
         onCreateButtonClick={handleCreateButtonClick}
       />
 
+      {!isMyPosts &&
+        !isLoading &&
+        !isLoadingFacilities &&
+        currentData &&
+        user?.role === 'ADMIN' && (
+          <SuggestionStatistics
+            total={statistics.total}
+            received={statistics.received}
+            inReview={statistics.reviewing}
+            completed={statistics.completed}
+          />
+        )}
+
       <SuggestionFilters
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -121,19 +134,6 @@ const Suggestion = () => {
       {!isLoading && !isLoadingFacilities && suggestions.length === 0 && (
         <SuggestionEmptyState isMyPosts={isMyPosts} />
       )}
-
-      {!isMyPosts &&
-        !isLoading &&
-        !isLoadingFacilities &&
-        currentData &&
-        user?.role === 'ADMIN' && (
-          <SuggestionStatistics
-            total={statistics.total}
-            received={statistics.received}
-            inReview={statistics.reviewing}
-            completed={statistics.completed}
-          />
-        )}
     </div>
   );
 };

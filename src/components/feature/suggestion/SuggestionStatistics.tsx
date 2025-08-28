@@ -14,7 +14,7 @@ export const SuggestionStatistics: React.FC<SuggestionStatisticsProps> = ({
   completed,
 }) => {
   return (
-    <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-6">
       <div className="bg-white rounded-lg shadow-sm border p-6 text-center">
         <div className="text-sm text-gray-600 mb-2">전체 건의사항</div>
         <div className="text-3xl font-bold" style={{ color: '#002e66' }}>
