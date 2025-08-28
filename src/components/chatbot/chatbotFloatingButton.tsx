@@ -31,7 +31,7 @@ const ChatbotFloatingButton = () => {
       <button
         onClick={toggleChat}
         className={`
-          fixed bottom-10 right-10 w-16 h-16 
+          fixed bottom-6 right-6 w-14 h-14 md:bottom-10 md:right-10 md:w-16 md:h-16
           ${
             isOpen
               ? 'bg-gray-600 hover:bg-gray-700'
@@ -45,17 +45,17 @@ const ChatbotFloatingButton = () => {
         `}
         aria-label={isOpen ? '채팅창 닫기' : '채팅봇 열기'}
       >
-        <div className="relative w-6 h-6">
+        <div className="relative w-5 h-5 md:w-6 md:h-6">
           <MessageCircle
             className={`
-              absolute inset-0 w-6 h-6 text-white
+              absolute inset-0 w-5 h-5 md:w-6 md:h-6 text-white
               transition-all duration-200
               ${isOpen ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0'}
             `}
           />
           <X
             className={`
-              absolute inset-0 w-6 h-6 text-white
+              absolute inset-0 w-5 h-5 md:w-6 md:h-6 text-white
               transition-all duration-200
               ${isOpen ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90'}
             `}
@@ -69,6 +69,7 @@ const ChatbotFloatingButton = () => {
           whitespace-nowrap opacity-0 group-hover:opacity-100
           transition-opacity duration-200 pointer-events-none
           ${isOpen ? 'hidden' : ''}
+          hidden md:block
         `}
         >
           시설 예약 챗봇
@@ -78,7 +79,7 @@ const ChatbotFloatingButton = () => {
 
       {isOpen && (
         <>
-          {isExpanded && (
+          {(isExpanded || window.innerWidth < 768) && (
             <div
               className="fixed inset-0 bg-black bg-opacity-50 z-30"
               onClick={toggleExpand}
@@ -90,10 +91,13 @@ const ChatbotFloatingButton = () => {
             fixed z-40 bg-white rounded-lg shadow-2xl flex flex-col overflow-hidden
             transition-all duration-300 ease-in-out
             ${
-              isExpanded
+              window.innerWidth < 768
+                ? 'top-16 bottom-16 left-4 right-4 rounded-lg'
+                : isExpanded
                 ? 'top-8 left-1/2 transform -translate-x-1/2 w-1/3 max-w-4xl h-5/6 mx-4'
                 : 'bottom-28 right-6 w-1/4 h-1/2'
             }
+            md:rounded-lg
           `}
           >
             <div className="bg-myongji text-white p-4 flex items-center justify-between">
@@ -107,7 +111,7 @@ const ChatbotFloatingButton = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={toggleExpand}
-                  className="p-1.5 hover:bg-blue-700 rounded transition-colors"
+                  className="p-1.5 hover:bg-blue-700 rounded transition-colors hidden md:block"
                   aria-label={isExpanded ? '창 축소' : '창 확대'}
                 >
                   {isExpanded ? (
