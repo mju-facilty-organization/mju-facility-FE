@@ -48,7 +48,10 @@ const StudentReservationHistory = () => {
 
     if (reservationData) {
       if (reservationData.resultType === 'SUCCESS') {
-        setReservations(reservationData.data);
+        const sortedReservations = [...reservationData.data].sort((a, b) =>
+          b.createAt.localeCompare(a.createAt)
+        );
+        setReservations(sortedReservations);
         setError(null);
       } else {
         setError('데이터를 불러오는데 실패했습니다.');
