@@ -79,7 +79,11 @@ export const FacilityInfo = ({
             />
           ) : (
             <div className="w-full h-72 flex items-center justify-center bg-gray-100 rounded-lg">
-              <School size={64} className="text-gray-400" />
+              <img
+                src="/classroomimage.jpg"
+                alt="기본 강의실 이미지"
+                className="w-full h-full object-cover"
+              />
             </div>
           )}
 

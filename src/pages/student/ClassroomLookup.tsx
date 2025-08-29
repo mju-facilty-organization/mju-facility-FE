@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 import { useFacilities } from '@/hooks/useFacility';
 import Pagination from '@/components/common/Pagination';
 import { Facility } from '@/types/facility';
-import { School } from 'lucide-react';
 
 const PAGE_SIZE = 1000;
 const DISPLAY_SIZE = 9;
@@ -221,9 +220,10 @@ const ClassroomLookup = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <School
-                        size={32}
-                        className="text-gray-400 md:w-12 md:h-12"
+                      <img
+                        src="/classroomimage.jpg"
+                        alt="기본 강의실 이미지"
+                        className="w-full h-full object-cover"
                       />
                     </div>
                   )
