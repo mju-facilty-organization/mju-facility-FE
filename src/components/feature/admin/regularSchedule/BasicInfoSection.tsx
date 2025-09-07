@@ -1,4 +1,5 @@
 import { Building } from 'lucide-react';
+import FacilitySelector from '@/components/common/FacilitySelector';
 import { BasicInfoSectionProps } from '@/types/RegularSchedule';
 
 const BasicInfoSection = ({
@@ -17,7 +18,7 @@ const BasicInfoSection = ({
       기본 정보 설정
     </h2>
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       <div>
         <label className="block text-sm font-medium mb-2">조직</label>
         <input
@@ -30,33 +31,24 @@ const BasicInfoSection = ({
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-2">시설</label>
-        <select
-          className="w-full p-3 border rounded-lg"
-          value={formData.facilityId}
-          onChange={(e) =>
-            setFormData({ ...formData, facilityId: e.target.value })
+      <div className="col-span-2">
+        <FacilitySelector
+          facilities={facilities}
+          selectedFacilityId={formData.facilityId}
+          onFacilityChange={(id) =>
+            setFormData({ ...formData, facilityId: String(id) })
           }
-          disabled={isLoadingFacilities || createScheduleMutation.isPending}
-        >
-          <option value="">시설을 선택하세요</option>
-          {facilities.map((facility) => (
-            <option key={facility.id} value={facility.id}>
-              {facility.facilityNumber}
-            </option>
-          ))}
-        </select>
-        {isLoadingFacilities && (
-          <p className="text-sm text-gray-500 mt-1">
-            시설 정보를 불러오는 중...
-          </p>
-        )}
-        {facilities.length === 0 && !isLoadingFacilities && (
-          <p className="text-sm text-red-500 mt-1">
-            사용 가능한 시설이 없습니다.
-          </p>
-        )}
+          disabled={createScheduleMutation.isPending}
+          loading={isLoadingFacilities}
+          showTypeLabel={true}
+          showFacilityLabel={true}
+          layout="horizontal"
+          className="w-full"
+          placeholder={{
+            type: '건물을 선택하세요',
+            facility: '시설을 선택하세요',
+          }}
+        />
       </div>
 
       <div>

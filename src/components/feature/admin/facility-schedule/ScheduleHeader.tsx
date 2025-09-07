@@ -1,5 +1,6 @@
-import { MapPin, RefreshCw, Building2, Clock, AlertCircle } from 'lucide-react';
-import ScheduleLegend from './ScheduleLegend';
+import { RefreshCw, Building2, Clock, AlertCircle } from 'lucide-react';
+import ScheduleLegend from '@/components/feature/admin/facility-schedule/ScheduleLegend';
+import FacilitySelector from '@/components/common/FacilitySelector';
 import { getFacilityTypeInKorean } from '@/utils/schedule';
 import { Facility } from '@/types/facility';
 
@@ -22,9 +23,16 @@ const ScheduleHeader = ({
   error,
   selectedFacility,
 }: ScheduleHeaderProps) => {
+  const handleFacilityChange = (id: number | string) => {
+    if (id === '' || id === null || id === undefined) {
+      return;
+    }
+    onFacilityChange(Number(id));
+  };
+
   return (
     <div className="bg-white border border-gray-100 shadow-sm rounded-lg">
-      <div className=" mx-auto px-6 py-4">
+      <div className="mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
@@ -32,24 +40,19 @@ const ScheduleHeader = ({
               <h1 className="text-3xl font-bold text-gray-900">시설 스케줄</h1>
             </div>
 
-            <div className="flex items-center gap-3 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-              <MapPin className="w-4 h-4 text-myongji" />
-              <span className="text-base font-medium text-gray-700">
-                시설 선택
-              </span>
-              <select
-                value={selectedFacilityId || ''}
-                onChange={(e) => onFacilityChange(Number(e.target.value))}
-                className="px-3 py-1.5 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-myongji/20 focus:border-myongji text-base font-medium text-gray-700 shadow-sm transition-all duration-200 min-w-[160px]"
-              >
-                <option value="">시설 선택</option>
-                {facilities.map((facility) => (
-                  <option key={facility.id} value={facility.id}>
-                    {facility.facilityNumber}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <FacilitySelector
+              facilities={facilities}
+              selectedFacilityId={selectedFacilityId}
+              onFacilityChange={handleFacilityChange}
+              loading={loading}
+              showTypeLabel={false}
+              showFacilityLabel={false}
+              layout="horizontal"
+              placeholder={{
+                type: '건물 선택',
+                facility: '시설 선택',
+              }}
+            />
           </div>
 
           <button
